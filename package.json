@@ -1,0 +1,31 @@
+{
+  "name": "cda",
+  "version": "1.0.0",
+  "description": "Projeto Interno de CdA da Mecajun",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "njwt": "^1.0.0",
+    "pg": "^7.18.2"
+  },
+  "devDependencies": {
+  	"nodemon": "^2.0.3"
+  },
+  "scripts": {
+    "servidor": "nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clarafortes12/CDA_back.git"
+  },
+  "keywords": [
+    "express"
+  ],
+  "author": "Marcos Eduardo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/clarafortes12/CDA_back/issues"
+  },
+  "homepage": "https://github.com/clarafortes12/CDA_back#readme"
+}
