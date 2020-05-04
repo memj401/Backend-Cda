@@ -39,7 +39,5 @@ O projeto está dividido nas seguintes partes:
 - [Nodemon](https://github.com/remy/nodemon): Módulo utilizado para reinicialização automática do servidor sempre que houver mudanças no código
 - [Njwt](https://github.com/jwtk/njwt): Módulo utilizado para criação e verificação de JWT's 
 
-Acrescentei essa linha pra test
-
 **Observação:**
 Para utilizar o nodemon basta escrever o comando 'npm run servidor' no diretório em que se encontra a pasta [src](src)
