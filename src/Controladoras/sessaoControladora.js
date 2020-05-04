@@ -1,6 +1,7 @@
 const usuarioRepositorio = require('../repositorios/usuario')
 const chave = require('../config/autenticacao/chaveSecreta').chaveSecreta
 const njwt = require('njwt')
+const bcrypt = require('bcrypt')
 
 const sessaoControladora = {
   async criar(requisicao, resposta) {
@@ -12,11 +13,9 @@ const sessaoControladora = {
     if (!usuarioExistente) {
       return resposta.status(401).json({erro: 'Usuario não existe'})
     }
+    const senhaConfere = await bcrypt.compare(senha, usuarioExistente.senha)
     
-    // bcryptjs.hash
-    // bcryptjs.compare
-    //const senhaConfere = bcrypt.compare(usuarioExistente.senha, senha)
-    if (usuarioExistente.senha !== senha) {
+    if (!senhaConfere) {
       return resposta.status(401).json({erro: 'Senha Incorreta'})
     }
 

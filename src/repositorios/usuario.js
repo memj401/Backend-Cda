@@ -56,6 +56,11 @@ const UsuarioRepositorio = {
 			}
 		})
 		return true
+	},
+
+	mudarSenha: async function (senha, usuario) {
+		await bancoDeDados.query(`UPDATE "usuarios" SET "senha" = '${senha}' WHERE "usuario" = '${usuario}'`)
+		return true
 	}
 }
 

@@ -20,6 +20,7 @@ roteador.post('/usuarios', usuarioControladora.inserir)
 roteador.put('/usuarios/:usuario', usuarioControladora.editar)
 roteador.delete('/usuarios/:usuario', usuarioControladora.remover)
 roteador.get('/usuarios', usuarioControladora.listarTodos)
+roteador.put('/usuarios/senha/:usuario', usuarioControladora.mudarSenha)
 
 //Funcionalidades Relacionadas ao Membro
 roteador.get('/membros', membroControladora.listarTodos)

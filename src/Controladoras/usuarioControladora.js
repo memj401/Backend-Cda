@@ -1,4 +1,5 @@
 const usuarioRepositorio = require('../repositorios/usuario')
+const bcrypt = require('bcrypt')
 
 const usuarioControladora = {
 	
@@ -31,7 +32,9 @@ const usuarioControladora = {
 		if (dados.permissao < 1 || dados.permissao > 4 ) {
 			return resposta.status(400).json({erro : 'Nível de Permissão Inválido'})
 		}
-
+		const sal = await bcrypt.genSalt()
+		const hash = await bcrypt.hash(dados.senha, sal)
+		dados.senha = hash
 		await usuarioRepositorio.inserir(dados)
 		usuarioCriado = await usuarioRepositorio.buscar(dados.usuario)
 		delete usuarioCriado.senha
@@ -91,6 +94,21 @@ const usuarioControladora = {
 		
 		resultado = await usuarioRepositorio.buscar(nomeDeUsuario)
 		return resposta.status(200).json(resultado)
+	},
+
+	mudarSenha: async function (requisicao, resposta) {
+		const nomeDeUsuario = requisicao.params.usuario
+		const senha = requisicao.body.senha
+		const usuarioExiste = await usuarioRepositorio.buscar(nomeDeUsuario)
+		
+		if (!usuarioExiste) {
+			return resposta.status(400).json({erro : 'Usuário Não Encontrado'})
+		}
+
+		const sal = await bcrypt.genSalt() 
+		const hash = await bcrypt.hash(senha, sal)
+		await usuarioRepositorio.mudarSenha(hash,nomeDeUsuario)
+		return  resposta.status(200).json({resultado: 'Senha Alterada com Sucesso'})
 	}
 }
 
