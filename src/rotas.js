@@ -31,7 +31,8 @@ roteador.put('/membros/:id', membroControladora.editar)
 roteador.delete('/membros/:id', membroControladora.remover)
 
 //Funcionalidades da parte eletrônica 
-roteador.get('/py/rfid/cadastro',pyControladora.mandarProFront)
-roteador.post('/py/rfid',pyControladora.receberRFid)
+roteador.get('/py/rfid/cadastro', pyControladora.mandarProFront)
+roteador.post('/py/rfid', pyControladora.receberRFid)
+roteador.get('/py/rfid/log', pyControladora.pegarTodoRegistro)
 
 module.exports = roteador

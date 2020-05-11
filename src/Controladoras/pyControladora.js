@@ -25,7 +25,7 @@ const pyControladora = {
     },
     pegarTodoRegistro: async function (requisicao, resposta){
         const dados = RFid.mostrarTodos()
-        return resposta.status(202).json(dados)
+        return resposta.status(200).json(dados)
     }
 }
 
