@@ -5,7 +5,7 @@ const middlewareAutenticacao = require('./middlewares/garantirUsuarioAutenticado
 const membroControladora = require('./controladoras/membroControladora')
 const usuarioControladora = require('./controladoras/usuarioControladora')
 const sessaoControladora = require('./controladoras/sessaoControladora')
-const pyControladora = require('./Controladoras/pyControladora')
+const pyControladora = require('./controladoras/pyControladora')
 
 const roteador = new Roteador()
 
@@ -31,8 +31,8 @@ roteador.put('/membros/:id', membroControladora.editar)
 roteador.delete('/membros/:id', membroControladora.remover)
 
 //Funcionalidades da parte eletrônica 
-roteador.get('/rfid/cadastro', pyControladora.mandarProFront)
-roteador.post('/rfid', pyControladora.receberRFid)
-roteador.get('/rfid/log', pyControladora.pegarTodoRegistro)
+roteador.get('/rfid/cadastro', pyControladora.buscarUltimo)
+roteador.post('/rfid', pyControladora.receber)
+roteador.get('/rfid/log', pyControladora.listarTodos)
 
 module.exports = roteador
