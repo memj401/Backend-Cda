@@ -3,6 +3,14 @@ const bcrypt = require('bcrypt')
 
 const usuarioControladora = {
 	
+	/**
+	 * Lista Todos os membros que existem no Banco de Dados
+	 *
+	 * @param      {Object}  Representa a requisicao  a requisição feita pela aplicação
+	 * @param      {Object}  Representa a resposta do servidor
+	 * @return     {Object[]}  { Retorna a lista de todos os membros, em formato json }
+	 */
+	
 	listarTodos: async function(requisicao, resposta) {
     	const usuarios = await usuarioRepositorio.buscarTodos()
     	if (!usuarios) {
@@ -15,11 +23,11 @@ const usuarioControladora = {
 		const dados = requisicao.body
 		const somenteDigitosPermissao = /^\d+$/.test(dados.permissao)
 		
-		if (!dados.usuario || !dados.senha || !dados.permissao) {
+		if (!dados.nomeDeUsuario || !dados.senha || !dados.permissao) {
 			return resposta.status(400).json({erro : 'Estão Faltando Campos'})
 		}
 
-		const usuarioJaExiste =  await usuarioRepositorio.buscar(dados.usuario)
+		const usuarioJaExiste =  await usuarioRepositorio.buscar(dados.nomeDeUsuario)
 		
 		if (usuarioJaExiste) {
 			return resposta.status(400).json({erro : 'Usuário Já Cadastrado'})
@@ -36,7 +44,7 @@ const usuarioControladora = {
 		const hash = await bcrypt.hash(dados.senha, sal)
 		dados.senha = hash
 		await usuarioRepositorio.inserir(dados)
-		usuarioCriado = await usuarioRepositorio.buscar(dados.usuario)
+		usuarioCriado = await usuarioRepositorio.buscar(dados.nomeDeUsuario)
 		delete usuarioCriado.senha
 		return resposta.status(201).json(usuarioCriado)
 	},
@@ -67,8 +75,8 @@ const usuarioControladora = {
 			return resposta.status(400).json({erro: 'Requisição Vazia'})
 		}
 		
-		if(dados.usuario){
-			const usuarioJaExiste = await usuarioRepositorio.buscar(dados.usuario)
+		if(dados.nomeDeUsuario){
+			const usuarioJaExiste = await usuarioRepositorio.buscar(dados.nomeDeUsuario)
 			
 			if (usuarioJaExiste) {
 				return resposta.status(400).json({erro: 'Nome de Usuário Já Cadastrado'})
@@ -87,12 +95,14 @@ const usuarioControladora = {
 		}
 		await usuarioRepositorio.editar(dados, nomeDeUsuario)
 		
-		if (dados.usuario) {
-			resultado = await usuarioRepositorio.buscar(dados.usuario)
+		if (dados.nomeDeUsuario) {
+			resultado = await usuarioRepositorio.buscar(dados.nomeDeUsuario)
+			delete resultado.senha
 			return resposta.status(200).json(resultado)
 		} 
 		
 		resultado = await usuarioRepositorio.buscar(nomeDeUsuario)
+		delete resultado.senha
 		return resposta.status(200).json(resultado)
 	},
 

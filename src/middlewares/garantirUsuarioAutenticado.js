@@ -1,7 +1,14 @@
 const chave = require('../config/autenticacao/chaveSecreta').chaveSecreta
 const njwt = require('njwt')
 
-
+/**
+ * Autentica o usuario via JWT
+ *
+ * @param      {Object}    requisicao  The requisicao
+ * @param      {Object}    resposta    The resposta
+ * @param      {Function}  proximo     The proximo
+ * @return     {Promise}   { description_of_the_return_value }
+ */
 async function middlewareAutenticacao (requisicao, resposta, proximo) {
 const cabecalho =  requisicao.headers.authorization
 const token = cabecalho.split(' ')[1]

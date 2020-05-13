@@ -1,18 +1,20 @@
-const usuarioRepositorio = require('../repositorios/usuario')
-const chave = require('../config/autenticacao/chaveSecreta').chaveSecreta
 const njwt = require('njwt')
 const bcrypt = require('bcrypt')
 
+const usuarioRepositorio = require('../repositorios/usuario')
+const chave = require('../config/autenticacao/chaveSecreta').chaveSecreta
+
 const sessaoControladora = {
   async criar(requisicao, resposta) {
-    const nomeDeUsuario = requisicao.body.usuario
+    const nomeDeUsuario = requisicao.body.nomeDeUsuario
     const senha = requisicao.body.senha
 
     const usuarioExistente = await usuarioRepositorio.buscar(nomeDeUsuario)
 
     if (!usuarioExistente) {
-      return resposta.status(401).json({erro: 'Usuario não existe'})
+      return resposta.status(401).json({erro: 'Usuário não existe'})
     }
+
     const senhaConfere = await bcrypt.compare(senha, usuarioExistente.senha)
     
     if (!senhaConfere) {
@@ -23,7 +25,8 @@ const sessaoControladora = {
 			emissor: 'http://localhost:3001',
 			usuario: `${requisicao.usuario}`,
 			permissao: `${requisicao.permissao}`
-		}
+    }
+    
 		const jwt = await njwt.create(info,chave)
 		//await jwt.setExpiration(new Date().getTime() + 15000)
 		const token = await jwt.compact()
