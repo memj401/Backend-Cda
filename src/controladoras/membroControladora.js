@@ -4,7 +4,7 @@ const MembroControladora = {
   listarTodos: async function(requisicao, resposta) {
     const membros = await membroRepositorio.buscarTodos()
     
-    if (!membros) {
+    if (membros.length === 0) {
        return resposta.status(404).json({erro: 'Não Há Membros no Banco de Dados'})
     } 
 
@@ -129,11 +129,38 @@ const MembroControladora = {
     const membroExiste = await membroRepositorio.buscarUm(membroId)
    
    if (!membroExiste) {
-      return resposta.status(400).json({erro : 'Membro Não Encontrado'})
+      return resposta.status(404).json({erro : 'Membro Não Encontrado'})
     }
 
     await membroRepositorio.remover(membroId)
     return resposta.status(200).json({Resultado :'Membro Deletado com Sucesso'})
+  },
+
+  inserirConhecimento: async function (requisicao, resposta) {
+    const membroId = requisicao.params.id
+    const dados = requisicao.body
+    const membroExiste = await membroRepositorio.buscarUm(membroId)
+
+    if (!membroExiste) {
+      return resposta.status(404).json({erro : 'Membro Não Encontrado'})
+    }
+    if (!dados.nivel || !dados.conhecimento) {
+      return resposta.status(400).json({erro : 'Estão Faltando Campos'})
+    }
+    if (dados.nivel !== 'iniciante' && dados.nivel !== 'intermediario' && dados.nivel !== 'avancado') {
+      return resposta.status(400).json({erro : 'Nível De Conhecimento Inválido'})
+    }
+    await membroRepositorio.inserirConhecimento(dados, membroId)
+    return resposta.status(200).json(dados)
+  },
+
+  listarConhecimentos: async function (requisicao, resposta) {
+     const membroId = requisicao.params.id
+     const conhecimentos = await membroRepositorio.listarConhecimentos(membroId)
+     if (conhecimentos.length === 0) {
+      return resposta.status(404).json({erro : 'Este membro não tem conhecimentos listados'})
+     }
+     return resposta.status(200).json(conhecimentos)
   }
 }
 
