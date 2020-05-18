@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "servidor": "nodemon src/index.js",
+    "docs": "jsdoc -c jsdoc.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,5 +27,8 @@
     "njwt": "^1.0.0",
     "nodemon": "^2.0.3",
     "pg": "^8.0.3"
+  },
+  "devDependencies": {
+    "jsdoc": "^3.6.4"
   }
 }
