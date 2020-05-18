@@ -6,17 +6,17 @@ const njwt = require('njwt')
 const UsuarioRepositorio = {
 	
 	buscar: async function (usuario) {
-		const resultado = await bancoDeDados.query(`SELECT * FROM "usuarios" WHERE "usuario" = '${usuario}';`)
+		const resultado = await bancoDeDados.query(`SELECT * FROM "usuarios" WHERE "nomeDeUsuario" = '${usuario}';`)
 		return resultado.rows[0]
 	},
 
 	buscarTodos: async function () {
-		const resultado = await bancoDeDados.query('SELECT "usuario", "permissao" FROM "usuarios";')
+		const resultado = await bancoDeDados.query('SELECT "nomeDeUsuario", "permissao" FROM "usuarios";')
 		return resultado.rows
 	},
 
 	inserir: async function (dados) {
-		await bancoDeDados.query(`INSERT INTO "usuarios" ("usuario", "senha" ,"permissao") VALUES ('${dados.usuario}', '${dados.senha}', ${dados.permissao});`,
+		await bancoDeDados.query(`INSERT INTO "usuarios" ("nomeDeUsuario", "senha" ,"permissao") VALUES ('${dados.nomeDeUsuario}', '${dados.senha}', ${dados.permissao});`,
 			function (erro, resposta) {
 			if (erro) {
 				console.log(erro)
@@ -26,7 +26,7 @@ const UsuarioRepositorio = {
 	},
 
 	editar: async function (dados, usuario) {
-		const parametros = ['usuario','permissao']
+		const parametros = ['nomeDeUsuario','permissao']
 		let queryFinal = 'UPDATE "usuarios" SET '
 		let parametroAnteriorFoiAtualizado = false
 		for (i = 0; i < parametros.length; ++i) {
@@ -38,7 +38,7 @@ const UsuarioRepositorio = {
 				parametroAnteriorFoiAtualizado = true
 			}
 		}
-		queryFinal += ` WHERE "usuario" = '${usuario}';`
+		queryFinal += ` WHERE "nomeDeUsuario" = '${usuario}';`
 		await bancoDeDados.query(queryFinal, 
 			function (erro, resposta) {
 			if (erro) {
@@ -49,7 +49,7 @@ const UsuarioRepositorio = {
 	},
 
 	remover: async function (usuario) {
-		await bancoDeDados.query(`DELETE from "usuarios" WHERE "usuario" = '${usuario}'`,
+		await bancoDeDados.query(`DELETE from "usuarios" WHERE "nomeDeUsuario" = '${usuario}'`,
 			function (erro, resposta) {
 			if (erro) {
 				console.log(erro)
@@ -59,7 +59,7 @@ const UsuarioRepositorio = {
 	},
 
 	mudarSenha: async function (senha, usuario) {
-		await bancoDeDados.query(`UPDATE "usuarios" SET "senha" = '${senha}' WHERE "usuario" = '${usuario}'`)
+		await bancoDeDados.query(`UPDATE "usuarios" SET "senha" = '${senha}' WHERE "nomeDeUsuario" = '${usuario}'`)
 		return true
 	}
 }

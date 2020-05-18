@@ -6,6 +6,9 @@
   "scripts": {
     "servidor": "nodemon src/index.js",
     "docs": "jsdoc -c jsdoc.json",
+    "tabelas": "node src/config/tabelas/index.js",
+    "seed": "node src/config/sementes/index.js",
+    "tabelas_teste": "node src/config/tabelas/index.js && node src/config/sementes/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,11 +27,12 @@
   "dependencies": {
     "bcrypt": "^4.0.1",
     "express": "^4.17.1",
+    "fs": "0.0.1-security",
     "njwt": "^1.0.0",
-    "nodemon": "^2.0.3",
     "pg": "^8.0.3"
   },
   "devDependencies": {
-    "jsdoc": "^3.6.4"
+    "jsdoc": "^3.6.4",
+    "nodemon": "^2.0.3"
   }
 }
