@@ -2,13 +2,13 @@ const bancoDeDados = require('../bancoDeDados/index')
 
 /**
 * Repositório de funções de acesso ao banco de dados de membros
-* @namespace Membrorepositorio
+* @namespace MembroRepositorio
 */
 
 const MembroRepositorio = {
   /**
   * Busca no banco de dados por dados de um membro armazenados através de sua identificação no sistema
-  * @memberof Membrorepositorio
+  * @memberof MembroRepositorio
   * @method buscarUm
   * @parameter {Number} id - Identificação numérica do membro a ser pesquisado no banco de dados
   * @returns {Object} Uma linha da tabela referente ao membro pesquisado
@@ -19,7 +19,7 @@ const MembroRepositorio = {
   },
   /**
   * Busca no banco de dados por um parametro igual a um valor específico e retorna o primeiro membro que se encaixa nele
-  * @memberof Membrorepositorio
+  * @memberof MembroRepositorio
   * @async
   * @method buscarUmPor
   * @parameter {String} parametro - Parâmetro da tabela a ser comparado
@@ -34,7 +34,7 @@ const MembroRepositorio = {
   * Busca no banco de dados por um parametro igual a um valor específico e retorna um array com todos os membros que se encaixam.
   * Se não houver uma entrada válida de parametro ou valor, ele retorna todo os membros da tabela. Para os parâmetros 'cargo' e 'nome'
   * A pesquisa é case insensitive
-  * @memberof Membrorepositorio
+  * @memberof MembroRepositorio
   * @async
   * @method buscarTodos
   * @parameter {String} parametro - Parâmetro da tabela a ser comparado
@@ -56,7 +56,7 @@ const MembroRepositorio = {
   },
   /**
   * Insere um novo membro no banco de dados
-  * @memberof Membrorepositorio
+  * @memberof MembroRepositorio
   * @async
   * @method inserir
   * @parameter {Object} dados - Informações do membro a ser adicionado na tabela contendo: nome,cargo,matricula e código rfid
@@ -73,7 +73,7 @@ const MembroRepositorio = {
  },
   /**
   * Edita, ou substitui, conteúdo de um membro já cadastrado no banco de dados
-  * @memberof Membrorepositorio
+  * @memberof MembroRepositorio
   * @async
   * @method editar
   * @parameter {Object} dados - Novos dados do membro a serem atualizados
@@ -106,7 +106,7 @@ const MembroRepositorio = {
   },
   /**
   * Remove um membro já cadastrado no banco de dados através de sua identificação numérica
-  * @memberof Membrorepositorio
+  * @memberof MembroRepositorio
   * @async
   * @method remover
   * @parameter {Integer} id - Identificação numérica do membro a ser pesquisado no banco de dados
