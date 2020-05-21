@@ -24,12 +24,11 @@ roteador.put('/usuarios/senha/:usuario', usuarioControladora.mudarSenha)
 
 //Funcionalidades Relacionadas ao Membro
 roteador.get('/membros', membroControladora.listarTodos)
-roteador.get('/membros/:parametro', membroControladora.listar)
+roteador.get('/membros/listar/:parametro', membroControladora.listar)
 roteador.get('/membros/:id', membroControladora.buscar)
 roteador.post('/membros', membroControladora.inserir)
 roteador.put('/membros/:id', membroControladora.editar)
 roteador.delete('/membros/:id', membroControladora.remover)
-roteador.get('/membros/:id/conhecimentos', membroControladora.listarConhecimentos)
 roteador.post('/membros/:id/conhecimentos', membroControladora.inserirConhecimento)
 
 //Funcionalidades da parte eletrônica 

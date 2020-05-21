@@ -34,13 +34,15 @@ const MembroControladora = {
 
   buscar: async function (requisicao, resposta) {
     const membroId = requisicao.params.id
-    const resultado = await membroRepositorio.buscarUm(membroId)
-
-    if (!resultado) {
+    const membro = await membroRepositorio.buscarUm(membroId)
+    
+    if (!membro) {
       return resposta.status(404).json({erro :'Membro não Encontrado' })
     }
-
-    return resposta.status(200).json(resultado)
+    
+    const conhecimentos = await membroRepositorio.listarConhecimentos(membroId)
+    membro.conhecimentos = conhecimentos
+    return resposta.status(200).json(membro)
   },
 
   inserir: async function (requisicao, resposta) {
@@ -152,15 +154,6 @@ const MembroControladora = {
     }
     await membroRepositorio.inserirConhecimento(dados, membroId)
     return resposta.status(200).json(dados)
-  },
-
-  listarConhecimentos: async function (requisicao, resposta) {
-     const membroId = requisicao.params.id
-     const conhecimentos = await membroRepositorio.listarConhecimentos(membroId)
-     if (conhecimentos.length === 0) {
-      return resposta.status(404).json({erro : 'Este membro não tem conhecimentos listados'})
-     }
-     return resposta.status(200).json(conhecimentos)
   }
 }
 
