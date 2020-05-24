@@ -8,13 +8,12 @@ const rfidRepositorio = require('../repositorios/rfid')
 
 const pyControladora = {
     /**
-        * Lida com a requisição POST recebendo o valor do rfid e colocando no banco de dados
+        * Lida com a requisição post recebendo o valor do rfid e colocando no banco de dados
         * @memberof pyControladora
         * @method receber
         * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
         * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
-        *         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
-
+        * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
     */
     receber: async function (requisicao, resposta){
         const dados = requisicao.body
@@ -32,8 +31,7 @@ const pyControladora = {
         * @method buscarUltimo
         * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
         * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
-        *         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
-
+        * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
     */
     buscarUltimo: async function (requisicao, resposta){
         const dados = await rfidRepositorio.buscarUltima()
@@ -51,7 +49,6 @@ const pyControladora = {
         * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
         * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
-
     */
     listarTodos: async function (requisicao, resposta){
         const dados = rfidRepositorio.buscarTodos()
