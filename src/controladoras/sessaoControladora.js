@@ -4,6 +4,11 @@ const bcrypt = require('bcrypt')
 const usuarioRepositorio = require('../repositorios/usuario')
 const chave = require('../config/autenticacao/chaveSecreta').chaveSecreta
 
+/**
+    * Controladora de funções envolvendo RFID e a requisição HTTP
+    * @namespace sessãoControladora
+*/
+
 const sessaoControladora = {
   async criar(requisicao, resposta) {
     const nomeDeUsuario = requisicao.body.nomeDeUsuario

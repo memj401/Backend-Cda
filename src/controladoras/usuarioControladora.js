@@ -1,16 +1,20 @@
 const usuarioRepositorio = require('../repositorios/usuario')
 const bcrypt = require('bcrypt')
 
+/**
+    * Controladora de funções envolvendo informações sobre os usuários e a requisição HTTP
+    * @namespace usuarioControladora
+*/
+
 const usuarioControladora = {
-	
-	/**
-	 * Lista Todos os membros que existem no Banco de Dados
-	 *
-	 * @param      {Object}  Representa a requisicao  a requisição feita pela aplicação
-	 * @param      {Object}  Representa a resposta do servidor
-	 * @return     {Object[]}  { Retorna a lista de todos os membros, em formato json }
-	 */
-	
+    /**
+        * Lida com a requisição GET respondendo com um vetor contendo todos os usuários ou um erro(404) caso não haja usuários no banco de dados
+        * @memberof usuarioControladora
+        * @method listarTodos
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
+    */
 	listarTodos: async function(requisicao, resposta) {
     	const usuarios = await usuarioRepositorio.buscarTodos()
     	if (!usuarios) {
@@ -18,7 +22,15 @@ const usuarioControladora = {
     	} 
       	return resposta.status(200).json(usuarios)
   	},
-
+    /**
+        * Lida com a requisição POST recebendo dados sobre um novo usuário e colocando no banco de dados caso tenha permissão, caso não
+		* tenha permissão ou o usuário ja tenha sido cadastrado a resposta é um erro(400)
+        * @memberof usuarioControladora
+        * @method inserir
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
+    */
 	inserir: async function (requisicao, resposta) {
 		const dados = requisicao.body
 		const somenteDigitosPermissao = /^\d+$/.test(dados.permissao)
@@ -26,7 +38,7 @@ const usuarioControladora = {
 		if (!dados.nomeDeUsuario || !dados.senha || !dados.permissao) {
 			return resposta.status(400).json({erro : 'Estão Faltando Campos'})
 		}
-
+		
 		const usuarioJaExiste =  await usuarioRepositorio.buscar(dados.nomeDeUsuario)
 		
 		if (usuarioJaExiste) {
@@ -48,7 +60,14 @@ const usuarioControladora = {
 		delete usuarioCriado.senha
 		return resposta.status(201).json(usuarioCriado)
 	},
-
+    /**
+        * Lida com a requisição DELETE recebendo dados sobre um usuário e o removendo do banco de dados caso exista, caso contrário responde com um erro(400)
+        * @memberof usuarioControladora
+        * @method remover
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
+    */
 	remover: async function (requisicao, resposta) {
 		const nomeDeUsuario = requisicao.params.usuario
 		const usuarioExiste = await usuarioRepositorio.buscar(nomeDeUsuario)
@@ -60,7 +79,14 @@ const usuarioControladora = {
 		await usuarioRepositorio.remover(nomeDeUsuario)
 		return resposta.status(200).json({resultado :'Membro Deletado com Sucesso'})
 	},
-
+    /**
+        * Lida com a requisição PUT recebendo novos dados sobre um usuário já existente e alterando eles no banco de dados, caso o usuário não exista, nenhum dado foi enviado ou os novos dados já estejam em uso por outro usuário é enviado um erro(400) como resposta
+        * @memberof usuarioControladora
+        * @method editar
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
+    */
 	editar: async function (requisicao, resposta) {
 		const nomeDeUsuario = requisicao.params.usuario
 		const dados = requisicao.body
@@ -105,7 +131,14 @@ const usuarioControladora = {
 		delete resultado.senha
 		return resposta.status(200).json(resultado)
 	},
-
+    /**
+        * Lida com a requisição POST recebendo o valor do rfid e colocando no banco de dados
+        * @memberof usuarioControladora
+        * @method mudarSenha
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
+    */
 	mudarSenha: async function (requisicao, resposta) {
 		const nomeDeUsuario = requisicao.params.usuario
 		const senha = requisicao.body.senha

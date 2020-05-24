@@ -1,5 +1,10 @@
 const membroRepositorio = require('../repositorios/membro')
 
+/**
+    * Controladora de funções envolvendo informações sobre os membros e a requisição HTTP
+    * @namespace membroControladora
+*/
+
 const MembroControladora = {
   listarTodos: async function(requisicao, resposta) {
     const membros = await membroRepositorio.buscarTodos()
