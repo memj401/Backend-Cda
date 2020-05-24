@@ -118,6 +118,20 @@ const MembroRepositorio = {
         console.log(erro)
       }
     })
+  },
+
+  inserirConhecimento: async function (dados,id){
+    await bancoDeDados.query(`INSERT INTO "conhecimentos"("conhecimento", "nivel", "membro_id") VALUES ('${dados.conhecimento}','${dados.nivel}', ${id});`,
+      function (erro, resposta) {
+      if (erro) {
+        console.log(erro)
+      }
+    })
+  },
+
+  listarConhecimentos: async function (id) {
+    let resultado = await bancoDeDados.query(`SELECT "conhecimento", "nivel" FROM "conhecimentos" WHERE "membro_id" = ${id}`)
+    return resultado.rows
   }
 
 }
