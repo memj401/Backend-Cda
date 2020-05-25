@@ -60,14 +60,20 @@ const MembroControladora = {
         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
     */
   buscar: async function (requisicao, resposta) {
-    const membroId = requisicao.params.id
-    const membro = await membroRepositorio.buscarUm(membroId)
+    const idMembro = requisicao.params.id
+    const membro = await membroRepositorio.buscarUm(idMembro)
     
     if (!membro) {
       return resposta.status(404).json({erro :'Membro não Encontrado' })
     }
     
-    const conhecimentos = await membroRepositorio.listarConhecimentos(membroId)
+    const conhecimentos = await membroRepositorio.listarConhecimentos(idMembro)
+    for (i = 0; i <  conhecimentos.length; i++) {
+      conhecimentos[i].conhecimento = await membroRepositorio.buscarNomeConhecimento(conhecimentos[i].id_conhecimento)
+      delete conhecimentos[i].id_membro
+      delete conhecimentos[i].id_conhecimento 
+    }
+
     membro.conhecimentos = conhecimentos
     return resposta.status(200).json(membro)
   },
@@ -123,12 +129,12 @@ const MembroControladora = {
         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
     */
   editar: async function(requisicao, resposta) {
-    const membroId = requisicao.params.id 
+    const idMembro = requisicao.params.id 
     const dados = requisicao.body
     const somenteDigitosMatricula = /^\d+$/.test(dados.matricula) 
     const somenteDigitosRfid = /^\d+$/.test(dados.rfid)          
 
-    const membroExistente = await membroRepositorio.buscarUm(membroId)
+    const membroExistente = await membroRepositorio.buscarUm(idMembro)
     
     if (Object.keys(dados).length === 0) {
        return resposta.status(404).json({erro: 'Requisição Vazia'})
@@ -164,8 +170,7 @@ const MembroControladora = {
     
     }
 
-    await membroRepositorio.editar(dados, membroId)
-    const membroAtualizado = await membroRepositorio.buscarUm(membroId)
+    const membroAtualizado = await membroRepositorio.editar(dados, idMembro)
     return resposta.status(200).json(membroAtualizado)
   },
     /**
@@ -177,41 +182,53 @@ const MembroControladora = {
         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
     */
   remover: async function (requisicao, resposta) {
-    const membroId = requisicao.params.id
-    const membroExiste = await membroRepositorio.buscarUm(membroId)
+    const idMembro = requisicao.params.id
+    const membroExiste = await membroRepositorio.buscarUm(idMembro)
    
    if (!membroExiste) {
       return resposta.status(404).json({erro : 'Membro Não Encontrado'})
     }
 
-    await membroRepositorio.remover(membroId)
+    await membroRepositorio.remover(idMembro)
     return resposta.status(200).json({Resultado :'Membro Deletado com Sucesso'})
   },
     /**
         * Lida com requisições POST recebendo o id e os conhecimentos a serem adicionados ao membro e inserindo os conhecimentos no banco de dados no membro cujo id foi enviado, caso o membro não exista retorna um erro(404),
         * caso não sejam enviados todos os campos ou o campo de conhecimentos não esteja formatado adequadamente é enviado um erro(400)
         * @memberof membroControladora
-        * @method inserirConhecimento
+        * @method inserirConhecimentoDoMembro
         * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
         * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
     */
-  inserirConhecimento: async function (requisicao, resposta) {
-    const membroId = requisicao.params.id
-    const dados = requisicao.body
-    const membroExiste = await membroRepositorio.buscarUm(membroId)
+  inserirConhecimentoDoMembro: async function (requisicao, resposta) {
+    const idMembro = requisicao.params.id
+    const corpo = requisicao.body
+    const conhecimento = corpo.conhecimento
+    const nivel = corpo.nivel
+    const membroExiste = await membroRepositorio.buscarUm(idMembro)
+    let idConhecimento = await membroRepositorio.buscarIdConhecimento(conhecimento)
 
     if (!membroExiste) {
       return resposta.status(404).json({erro : 'Membro Não Encontrado'})
     }
-    if (!dados.nivel || !dados.conhecimento) {
-      return resposta.status(400).json({erro : 'Estão Faltando Campos'})
+
+    if (nivel !== 'iniciante' &&  nivel !== 'intermediario' &&  nivel !== 'avancado') {
+      return resposta.status(400).json({erro : 'Nivel de Conhecimento Inválido'})
     }
-    if (dados.nivel !== 'iniciante' && dados.nivel !== 'intermediario' && dados.nivel !== 'avancado') {
-      return resposta.status(400).json({erro : 'Nível De Conhecimento Inválido'})
+    
+    if (!idConhecimento) {
+      idConhecimento = await membroRepositorio.inserirConhecimento(conhecimento)
+      await membroRepositorio.inserirConhecimentoDoMembro(idMembro,idConhecimento,nivel)
+    } else {
+      const conhecimentoRepetido = await membroRepositorio.verficarConhecimentoRepetido(idMembro, idConhecimento)
+      if (conhecimentoRepetido) {
+        return resposta.status(400).json({erro : 'Membro Já Possui Este Conhecimento'})
+      }
+      await membroRepositorio.inserirConhecimentoDoMembro(idMembro,idConhecimento,nivel)
     }
-    await membroRepositorio.inserirConhecimento(dados, membroId)
-    return resposta.status(200).json(dados)
+    
+    return resposta.status(200).json(corpo)
   }
 }
 

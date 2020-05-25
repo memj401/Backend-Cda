@@ -29,7 +29,7 @@ roteador.get('/membros/:id', membroControladora.buscar)
 roteador.post('/membros', membroControladora.inserir)
 roteador.put('/membros/:id', membroControladora.editar)
 roteador.delete('/membros/:id', membroControladora.remover)
-roteador.post('/membros/:id/conhecimentos', membroControladora.inserirConhecimento)
+roteador.post('/membros/:id/conhecimentos', membroControladora.inserirConhecimentoDoMembro)
 
 //Funcionalidades da parte eletrônica 
 roteador.get('/rfid/cadastro', pyControladora.buscarUltimo)
