@@ -73,7 +73,7 @@ const usuarioControladora = {
 		const usuarioExiste = await usuarioRepositorio.buscar(nomeDeUsuario)
  		
  		if (!usuarioExiste) {
-			return resposta.status(400).json({erro : 'Usuário Não Encontrado'})
+			return resposta.status(404).json({erro : 'Usuário Não Encontrado'})
 		}
 		
 		await usuarioRepositorio.remover(nomeDeUsuario)

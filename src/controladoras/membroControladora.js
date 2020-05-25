@@ -6,16 +6,31 @@ const membroRepositorio = require('../repositorios/membro')
 */
 
 const MembroControladora = {
+    /**
+        * Lida com a requisição GET respondendo com um vetor contendo todos os membros ou um erro(404) caso não haja membros no banco de dados
+        * @memberof membroControladora
+        * @method listarTodos
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
+    */
   listarTodos: async function(requisicao, resposta) {
     const membros = await membroRepositorio.buscarTodos()
     
     if (membros.length === 0) {
-       return resposta.status(404).json({erro: 'Não Há Membros no Banco de Dados'})
+        return resposta.status(404).json({erro: 'Não Há Membros no Banco de Dados'})
     } 
 
     return resposta.status(200).json(membros)
   },
-
+    /**
+        * Lida com a requisição GET respondendo com um vetor contendo alguns membros selecionados a partir de parametros enviados na requisição ou um erro(400) caso o parametro de busca seja invalido ou um erro(404) caso não haja membros que se encaixem no parametro de busca
+        * @memberof membroControladora
+        * @method listar
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
+    */
   listar: async function (requisicao, resposta) {
     const valor = requisicao.body.valor
     const parametro = requisicao.params.parametro
@@ -36,7 +51,14 @@ const MembroControladora = {
 
     return resposta.status(200).json(membros)
   },
-
+    /**
+        * Lida com requisições GET respondendo com os dados sobre um membro selecionado com base no id do membro no banco de dados ou um erro(404) caso não exista um membro com o id selecionado
+        * @memberof membroControladora
+        * @method buscar
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
+    */
   buscar: async function (requisicao, resposta) {
     const membroId = requisicao.params.id
     const membro = await membroRepositorio.buscarUm(membroId)
@@ -49,7 +71,15 @@ const MembroControladora = {
     membro.conhecimentos = conhecimentos
     return resposta.status(200).json(membro)
   },
-
+    /**
+        * Lida com requisições POST recebendo dados sobre um novo membro e colocando no banco de dados e respondendo com o status(200), caso não sejam enviadas todas as informações necessárias ou qualquer informação do membro já esteja
+        * cadastrada, como rfid, matricula ou nome é enviado um erro(400) em resposta
+        * @memberof membroControladora
+        * @method inserir
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
+    */
   inserir: async function (requisicao, resposta) {
     const dados = requisicao.body
     const somenteDigitosMatricula = /^\d+$/.test(dados.matricula) //Checa se o campo da matrícula tem somente dígitos
@@ -73,7 +103,7 @@ const MembroControladora = {
       
     if (matriculaJaExiste) {
       return resposta.status(400).json({erro : 'Matrícula Já Cadastrada'})
-    } 
+    }
 
     if (rfidJaExiste) {
       return resposta.status(400).json({erro: 'RFID Já Cadastrado'})
@@ -83,7 +113,15 @@ const MembroControladora = {
     const membroInserido = await membroRepositorio.buscarUmPor('matricula', dados.matricula)
     return resposta.status(201).json(membroInserido)
   },
-  
+      /**
+        * Lida com requisições PUT editando uma entrada de membro no banco de dados com novos dados fornecidos, caso não sejam fornecidas informações ou o membro a ser editado não exista é enviado um erro(404),
+        * caso os novos dados a serem usados já pertecerem a outro membro retorna um erro(400) 
+        * @memberof membroControladora
+        * @method editar
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
+    */
   editar: async function(requisicao, resposta) {
     const membroId = requisicao.params.id 
     const dados = requisicao.body
@@ -130,7 +168,14 @@ const MembroControladora = {
     const membroAtualizado = await membroRepositorio.buscarUm(membroId)
     return resposta.status(200).json(membroAtualizado)
   },
-
+    /**
+        * Lida com requisições DELETE recebendo o id de um membro e o removendo do banco de dados caso exista, caso contrário responde com um erro(404) 
+        * @memberof membroControladora
+        * @method remover
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
+    */
   remover: async function (requisicao, resposta) {
     const membroId = requisicao.params.id
     const membroExiste = await membroRepositorio.buscarUm(membroId)
@@ -142,7 +187,15 @@ const MembroControladora = {
     await membroRepositorio.remover(membroId)
     return resposta.status(200).json({Resultado :'Membro Deletado com Sucesso'})
   },
-
+    /**
+        * Lida com requisições POST recebendo o id e os conhecimentos a serem adicionados ao membro e inserindo os conhecimentos no banco de dados no membro cujo id foi enviado, caso o membro não exista retorna um erro(404),
+        * caso não sejam enviados todos os campos ou o campo de conhecimentos não esteja formatado adequadamente é enviado um erro(400)
+        * @memberof membroControladora
+        * @method inserirConhecimento
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
+    */
   inserirConhecimento: async function (requisicao, resposta) {
     const membroId = requisicao.params.id
     const dados = requisicao.body
