@@ -1,5 +1,5 @@
 DELETE FROM "membros";
-ALTER SEQUENCE membros_id_seq RESTART; /*Reiniciando a squência dos id's para 1*/
+ALTER SEQUENCE membros_id_membro_seq RESTART; /*Reiniciando a squência dos id's para 1*/
 
 INSERT INTO "membros"("nome", "cargo", "matricula","rfid")
 VALUES 

@@ -1,5 +1,5 @@
 DELETE FROM "conhecimentos";
-ALTER SEQUENCE conhecimentos_id_seq RESTART; /*Reiniciando a squência dos id's para 1*/
+ALTER SEQUENCE conhecimentos_id_conhecimento_seq RESTART; /*Reiniciando a squência dos id's para 1*/
 
 INSERT INTO "conhecimentos"("conhecimento")
 VALUES
