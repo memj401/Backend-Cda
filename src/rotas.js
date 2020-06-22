@@ -1,6 +1,7 @@
 const Roteador = require('express').Router
 
 const middlewareAutenticacao = require('./middlewares/garantirUsuarioAutenticado')
+const verificarTokenFront = require('./middlewares/verificarTokenFront')
 
 const membroControladora = require('./controladoras/membroControladora')
 const usuarioControladora = require('./controladoras/usuarioControladora')
@@ -11,6 +12,9 @@ const roteador = new Roteador()
 
 //Métodos Relacionados à Sessão
 roteador.post('/', sessaoControladora.criar)
+
+//Método para Verificação do Token para o Front-End
+roteador.get('/verificar', verificarTokenFront)
 
 //Middleware de Verficação do JWT
 roteador.use(middlewareAutenticacao)

@@ -36,8 +36,8 @@ const sessaoControladora = {
 
     const info = {
 			emissor: 'http://localhost:3001',
-			usuario: `${requisicao.usuario}`,
-			permissao: `${requisicao.permissao}`
+			usuario: `${requisicao.nome}`,
+			permissao: `${usuarioExistente.permissao}`
     }
     
 		const jwt = await njwt.create(info,chave)
