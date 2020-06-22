@@ -19,7 +19,7 @@ const sessaoControladora = {
       * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
   */
   async criar(requisicao, resposta) {
-    const nomeDeUsuario = requisicao.body.nomeDeUsuario
+    const nomeDeUsuario = requisicao.body.nome
     const senha = requisicao.body.senha
 
     const usuarioExistente = await usuarioRepositorio.buscar(nomeDeUsuario)

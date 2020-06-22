@@ -16,7 +16,7 @@ const UsuarioRepositorio = {
 	*	@returns {Object} Uma linha da tabela com dados referentes ao usuário pesquisado
 	*/
 	buscar: async function (usuario) {
-		const resultado = await bancoDeDados.query(`SELECT * FROM "usuarios" WHERE "nomeDeUsuario" = '${usuario}';`)
+		const resultado = await bancoDeDados.query(`SELECT * FROM "usuarios" WHERE "nome" = '${usuario}';`)
 		return resultado.rows[0]
 	},
 	/**
@@ -27,7 +27,7 @@ const UsuarioRepositorio = {
 	*	@returns {Array<Object>} Um array de objetos que armazenam dados de usuários
 	*/
 	buscarTodos: async function () {
-		const resultado = await bancoDeDados.query('SELECT "nomeDeUsuario", "permissao" FROM "usuarios";')
+		const resultado = await bancoDeDados.query('SELECT "nome", "permissao" FROM "usuarios";')
 		return resultado.rows
 	},
 	/**
@@ -36,13 +36,13 @@ const UsuarioRepositorio = {
 	*	@async
 	*	@method inserir
 	*	@parameter {Object} dados - Dados do usuário a ser adicionado
-	*	@parameter {String} dados.nomeDeUsuario - Nome do usuário
+	*	@parameter {String} dados.nome - Nome do usuário
 	*	@parameter {String} dados.senha - Senha do usuário
 	*	@parameter {String} dados.permissao - Nível de acesso do usuário
 	*	@returns {Boolean} Retorno verdadeiro utilizado apenas para determinar o fim correto da função
 	*/
 	inserir: async function (dados) {
-		await bancoDeDados.query(`INSERT INTO "usuarios" ("nomeDeUsuario", "senha" ,"permissao") VALUES ('${dados.nomeDeUsuario}', '${dados.senha}', ${dados.permissao});`,
+		await bancoDeDados.query(`INSERT INTO "usuarios" ("nome", "senha" ,"permissao") VALUES ('${dados.nome}', '${dados.senha}', ${dados.permissao});`,
 			function (erro, resposta) {
 			if (erro) {
 				console.log(erro)
@@ -72,7 +72,7 @@ const UsuarioRepositorio = {
 				parametroAnteriorFoiAtualizado = true
 			}
 		}
-		queryFinal += ` WHERE "nomeDeUsuario" = '${usuario}';`
+		queryFinal += ` WHERE "nome" = '${usuario}';`
 		await bancoDeDados.query(queryFinal, 
 			function (erro, resposta) {
 			if (erro) {
@@ -90,7 +90,7 @@ const UsuarioRepositorio = {
 	*	@returns {Boolean} Retorno verdadeiro utilizado apenas para determinar o fim correto da função
 	*/
 	remover: async function (usuario) {
-		await bancoDeDados.query(`DELETE from "usuarios" WHERE "nomeDeUsuario" = '${usuario}'`,
+		await bancoDeDados.query(`DELETE from "usuarios" WHERE "nome" = '${usuario}'`,
 			function (erro, resposta) {
 			if (erro) {
 				console.log(erro)
@@ -108,7 +108,7 @@ const UsuarioRepositorio = {
 	*	@returns {Boolean} Retorno verdadeiro utilizado apenas para determinar o fim correto da função
 	*/
 	mudarSenha: async function (senha, usuario) {
-		await bancoDeDados.query(`UPDATE "usuarios" SET "senha" = '${senha}' WHERE "nomeDeUsuario" = '${usuario}'`)
+		await bancoDeDados.query(`UPDATE "usuarios" SET "senha" = '${senha}' WHERE "nome" = '${usuario}'`)
 		return true
 	}
 }

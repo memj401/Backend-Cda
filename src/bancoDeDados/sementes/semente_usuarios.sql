@@ -1,6 +1,6 @@
 DELETE FROM "usuarios";
 
-INSERT INTO "usuarios"("nomeDeUsuario", "senha", "permissao")
+INSERT INTO "usuarios"("nome", "senha", "permissao")
 VALUES 
   ('User_1', '$2b$10$kSGlgyU70rCyOz5yQC4wiujuz2FZ8mbiN3/WBBfJ6Li4IFWw44992', 1),
   ('User_2', '$2b$10$o73nLMsXE0e/arrmLb2vBOww06kYX6Wtx9YnxJocmsLcip.10txnm', 2),

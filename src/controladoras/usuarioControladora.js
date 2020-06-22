@@ -35,11 +35,11 @@ const usuarioControladora = {
 		const dados = requisicao.body
 		const somenteDigitosPermissao = /^\d+$/.test(dados.permissao)
 		
-		if (!dados.nomeDeUsuario || !dados.senha || !dados.permissao) {
+		if (!dados.nome || !dados.senha || !dados.permissao) {
 			return resposta.status(400).json({erro : 'Estão Faltando Campos'})
 		}
 		
-		const usuarioJaExiste =  await usuarioRepositorio.buscar(dados.nomeDeUsuario)
+		const usuarioJaExiste =  await usuarioRepositorio.buscar(dados.nome)
 		
 		if (usuarioJaExiste) {
 			return resposta.status(400).json({erro : 'Usuário Já Cadastrado'})
@@ -56,7 +56,7 @@ const usuarioControladora = {
 		const hash = await bcrypt.hash(dados.senha, sal)
 		dados.senha = hash
 		await usuarioRepositorio.inserir(dados)
-		usuarioCriado = await usuarioRepositorio.buscar(dados.nomeDeUsuario)
+		usuarioCriado = await usuarioRepositorio.buscar(dados.nome)
 		delete usuarioCriado.senha
 		return resposta.status(201).json(usuarioCriado)
 	},
@@ -101,8 +101,8 @@ const usuarioControladora = {
 			return resposta.status(400).json({erro: 'Requisição Vazia'})
 		}
 		
-		if(dados.nomeDeUsuario){
-			const usuarioJaExiste = await usuarioRepositorio.buscar(dados.nomeDeUsuario)
+		if(dados.nome){
+			const usuarioJaExiste = await usuarioRepositorio.buscar(dados.nome)
 			
 			if (usuarioJaExiste) {
 				return resposta.status(400).json({erro: 'Nome de Usuário Já Cadastrado'})
@@ -121,8 +121,8 @@ const usuarioControladora = {
 		}
 		await usuarioRepositorio.editar(dados, nomeDeUsuario)
 		
-		if (dados.nomeDeUsuario) {
-			resultado = await usuarioRepositorio.buscar(dados.nomeDeUsuario)
+		if (dados.nome) {
+			resultado = await usuarioRepositorio.buscar(dados.nome)
 			delete resultado.senha
 			return resposta.status(200).json(resultado)
 		} 
