@@ -6,9 +6,9 @@
   "scripts": {
     "servidor": "nodemon src/index.js",
     "docs": "jsdoc -c jsdoc.json",
-    "tabelas": "node src/config/tabelas/index.js",
-    "seed": "node src/config/sementes/index.js",
-    "tabelas_teste": "node src/config/tabelas/index.js && node src/config/sementes/index.js",
+    "tabelas": "node src/bancoDeDados/tabelas/index.js",
+    "seed": "node src/bancoDeDados/sementes/index.js",
+    "tabelas_teste": "node src/bancoDeDados/tabelas/index.js && node src/bancoDeDados/sementes/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

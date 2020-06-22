@@ -52,7 +52,7 @@ const pyControladora = {
         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
     */
     listarTodos: async function (requisicao, resposta){
-        const dados = rfidRepositorio.buscarTodos()
+        const dados = await rfidRepositorio.buscarTodos()
         return resposta.status(200).json(dados)
     }
 }

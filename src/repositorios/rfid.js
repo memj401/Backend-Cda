@@ -25,7 +25,8 @@ const rfid = {
         * @param {Boolean} dados.valido Um booleano que indica se o cartão é valido ou não 
     */
     inserir: async function(dados){
-        await bancoDeDados.query(`INSERT INTO "rfidlog" ("nome","rfid","valido","horario") VALUES ('${dados.nome}', '${dados.rfid}', ${dados.valido}, current_timestamp);`,
+        await bancoDeDados.query(`INSERT INTO "rfidlog" ("nome","rfid","valido","data","horario") 
+            VALUES ('${dados.nome}', '${dados.rfid}', ${dados.valido}, CURRENT_DATE, LOCALTIME);`,
         function (erro,resposta) {
             if (erro) {
                 console.log(erro)
@@ -39,8 +40,13 @@ const rfid = {
         * @returns {Array} Um array de objetos contendo todas as linhas da tabela
     */
     buscarTodos: async function(){
-        const resultado = await bancoDeDados.query(`SELECT * FROM "rfidlog" ORDER BY "horario" DESC;`)
-        return resultado.rows
+        const historico = await bancoDeDados.query(`SELECT * FROM "rfidlog" ORDER BY "data" DESC,"horario" DESC;`)
+        const datasFormatadas = await bancoDeDados.query(`SELECT "horario", TO_CHAR("data", 'dd/mm/yyyy') 
+            FROM "rfidlog" ORDER BY "data" DESC,"horario" DESC;`)
+        for (var i = 0; i < historico.rows.length; i++) {
+            historico.rows[i].data = datasFormatadas.rows[i].to_char
+        }
+        return historico.rows
     },
     removerUltimoMes: 3 //Pra n ficar guardando dados desnecessários
 }
