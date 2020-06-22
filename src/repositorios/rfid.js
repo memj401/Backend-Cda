@@ -25,7 +25,7 @@ const rfid = {
         * @param {Boolean} dados.valido Um booleano que indica se o cartão é valido ou não 
     */
     inserir: async function(dados){
-        await bancoDeDados.query(`INSERT INTO "rfidlog" ("rfid","valido","horario") VALUES ('${dados.rfid}', ${dados.valido}, current_timestamp);`,
+        await bancoDeDados.query(`INSERT INTO "rfidlog" ("nome","rfid","valido","horario") VALUES ('${dados.nome}', '${dados.rfid}', ${dados.valido}, current_timestamp);`,
         function (erro,resposta) {
             if (erro) {
                 console.log(erro)

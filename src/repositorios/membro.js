@@ -13,7 +13,7 @@ const MembroRepositorio = {
   * @parameter {Number} id - Identificação numérica do membro a ser pesquisado no banco de dados
   * @returns {Object} Uma linha da tabela referente ao membro pesquisado
   */
- buscarUm: async function(id) {
+  buscarUm: async function(id) {
     const resultado = await bancoDeDados.query(`SELECT * FROM "membros" WHERE "id_membro" = ${id};`)
     return resultado.rows[0]
   },

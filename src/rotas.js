@@ -34,6 +34,6 @@ roteador.post('/membros/:id/conhecimentos', membroControladora.inserirConhecimen
 //Funcionalidades da parte eletrônica 
 roteador.get('/rfid/cadastro', pyControladora.buscarUltimo)
 roteador.post('/rfid', pyControladora.receber)
-roteador.get('/rfid/log', pyControladora.listarTodos)
+roteador.get('/rfid/acessos', pyControladora.listarTodos)
 
 module.exports = roteador

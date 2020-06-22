@@ -20,7 +20,8 @@ const pyControladora = {
         const buscaRfid =  await membroRepositorio.buscarUmPor("rfid",dados.rfid)
         const informaçõesDaEntrada={ 
             rfid: dados.rfid,
-            valido: (buscaRfid != undefined) // testar isso
+            valido: (buscaRfid != undefined), // testar isso
+            nome: (buscaRfid !=undefined) ? buscaRfid.nome : "Cartão Inválido"
         }
         rfidRepositorio.inserir(informaçõesDaEntrada)
         return resposta.status(200).end()
