@@ -12,7 +12,6 @@ async function verificarTokenFront (requisicao, resposta, proximo) {
 
 	try {
 		const tokenVerificado = njwt.verify(token, chave)
-		console.log(tokenVerificado)
 		return resposta.status(200).json({permissao: tokenVerificado.body.permissao})
 	} catch(erro) {
 		return resposta.status(401).json({erro: 'Não Autorizado'})
