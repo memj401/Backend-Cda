@@ -36,7 +36,7 @@ const sessaoControladora = {
 
     const info = {
 			emissor: 'http://localhost:3001',
-			usuario: `${nomeDeUsuario}`,
+			usuario: `${usuarioExistente.nome}`,
 			permissao: `${usuarioExistente.permissao}`
     }
     

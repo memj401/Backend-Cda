@@ -13,8 +13,21 @@ const MembroRepositorio = {
   * @parameter {Number} id - Identificação numérica do membro a ser pesquisado no banco de dados
   * @returns {Object} Uma linha da tabela referente ao membro pesquisado
   */
-  buscarUm: async function(id) {
+ buscarUm: async function(id) {
     const resultado = await bancoDeDados.query(`SELECT * FROM "membros" WHERE "id_membro" = ${id};`)
+    
+    if (resultado.rows.length !== 0) {
+      const conhecimentos = await bancoDeDados.query(`SELECT * FROM "relacao_membros_conhecimentos" 
+        WHERE "id_membro" = ${id}`)
+      for (i = 0; i <  conhecimentos.rows.length; i++) {
+        nomeConhecimento = await bancoDeDados.query(`SELECT "nome" FROM "conhecimentos" 
+          WHERE id_conhecimento = ${conhecimentos.rows[i].id_conhecimento}`)
+        conhecimentos.rows[i].nome = nomeConhecimento.rows[0].nome
+        delete conhecimentos.rows[i].id_membro  
+      }
+      resultado.rows[0].conhecimentos = conhecimentos.rows
+    }
+    
     return resultado.rows[0]
   },
   /**
@@ -27,7 +40,7 @@ const MembroRepositorio = {
   * @returns {Object} Uma linha da tabela referente ao membro pesquisado
   */
   buscarUmPor: async function (parametro, valor) {
-    resultado = await bancoDeDados.query(`SELECT * FROM "membros" WHERE "${parametro}" = '${valor}';`)
+    const resultado = await bancoDeDados.query(`SELECT * FROM "membros" WHERE "${parametro}" = '${valor}';`)
     return resultado.rows[0]
   },
   /**
@@ -51,6 +64,19 @@ const MembroRepositorio = {
       }
     } else {
       resultado = await bancoDeDados.query('SELECT * FROM "membros";')
+    }
+    if (resultado.rows.length !== 0) {
+      for (let i = 0; i < resultado.rows.length; i++) {
+        let conhecimentos = await bancoDeDados.query(`SELECT * FROM "relacao_membros_conhecimentos" 
+          WHERE "id_membro" = ${resultado.rows[i].id_membro}`)
+        for (let j = 0; j < conhecimentos.rows.length; j++) {
+          nomeConhecimento = await bancoDeDados.query(`SELECT "nome" FROM "conhecimentos" 
+            WHERE id_conhecimento = ${conhecimentos.rows[j].id_conhecimento}`)
+          conhecimentos.rows[j].nome = nomeConhecimento.rows[0].nome
+          delete conhecimentos.rows[j].id_membro
+        }
+        resultado.rows[i].conhecimentos = conhecimentos.rows
+      }
     }
     return resultado.rows
   },
@@ -78,7 +104,7 @@ const MembroRepositorio = {
   * @method editar
   * @parameter {Object} dados - Novos dados do membro a serem atualizados
   * @parameter {Number} id - Identificação numérica do membro a ser pesquisado no banco de dados
-  * @returns {Boolean} Retorno verdadeiro utilizado apenas para determinar o fim da função
+  * @returns {Object} Retorna as informações atualizadas do membro
   */
   editar: async function (dados, id)  {
     const parametros = ['nome','cargo','matricula', 'rfid']
@@ -96,7 +122,7 @@ const MembroRepositorio = {
     }
     queryFinal += ` WHERE "id_membro" = ${id} RETURNING *;`
     const resultado = await bancoDeDados.query(queryFinal)
-    return resultado.rows
+    return resultado.rows[0]
   },
   /**
   * Remove um membro já cadastrado no banco de dados através de sua identificação numérica
@@ -112,95 +138,7 @@ const MembroRepositorio = {
         console.log(erro)
       }
     })
-  },
-  /**
-  * Busca o id associado a um determinado conhecimento no Banco de Dados, sendo que a busca é case insensitive
-  * @memberof MembroRepositorio
-  * @async
-  * @method buscarIdConhecimento
-  * @parameter {String} conhecimento - nome do conhecimento pelo qual será feita a busca
-  * @returns {Integer}  Retorna o identificador numérico associado ao conhecimento buscado se este existe, do contrário retorna-se falso
-  */
- buscarIdConhecimento: async function (conhecimento) {
-    resultado = await bancoDeDados.query(`SELECT "id_conhecimento" FROM "conhecimentos" WHERE "conhecimento" ILIKE '${conhecimento}%';`)
-    if (Object.keys(resultado.rows).length === 0) {
-      return false
-    }
-    return resultado.rows[0].id_conhecimento
-  },
-  /**
-  * Insere um conhecimento não catalogado no Banco de Dados, mais especificamenta na tabela de Conhecimentos
-  * @memberof MembroRepositorio
-  * @async
-  * @method inserirConhecimento
-  * @parameter {String} conhecimento - nome do conhecimento pelo qual será feita a busca
-  * @returns {Integer} Retorna o identificador numérico associado ao conhecimento adicionado na tabela
-  */
-   inserirConhecimento: async function (conhecimento) {
-    resultado = await bancoDeDados.query(`INSERT INTO "conhecimentos" ("conhecimento") VALUES ('${conhecimento}') RETURNING "id_conhecimento";`)
-    return resultado.rows[0].id_conhecimento
-  },
-  /**
-  * Adiciona um determinado conhecimento ao membro, juntamente com seu nivel de proficiência
-  * @memberof MembroRepositorio
-  * @async
-  * @method inserirConhecimentoDoMembro
-  * @parameter {Integer} idMembro - identificador do membro ao qual o conhecimento será adicionado
-  * @parameter {Integer} idConhecimento - identificador do conhecimento que será adicionado ao membro
-  * @parameter {String} nivel - indica o nível de proficiência do membro, variando entre iniciante; intermediário e avançado
-  * @returns {Boolean} Retorno verdadeiro utilizado apenas para determinar o fim da função
-  */
-   inserirConhecimentoDoMembro: async function (idMembro,idConhecimento, nivel) {
-    await bancoDeDados.query(`INSERT INTO "relacao_membros_conhecimentos"("id_membro", "id_conhecimento", "nivel") 
-      VALUES (${idMembro}, ${idConhecimento},'${nivel}');`,
-      function (erro, resposta) {
-        if (erro) {
-          console.log(erro)
-        }
-      })
-    return true
-  },
-  /**
-  * Verifica se o conhecimento a ser adicinado ao membro já existe no Banco de Dados
-  * @memberof MembroRepositorio
-  * @async
-  * @method verficarConhecimentoRepetido
-  * @parameter {Integer} idMembro - identificador do membro ao qual o conhecimento seria adicionado
-  * @parameter {Integer} idConhecimento - identificador do conhecimento que seria adicionado ao membro
-  * @returns {Object} Retorna as informações da tabela caso o membro já tenha este conhecimento no Banco de Dados, do contrário retorna-se falso.
-  */
-  verficarConhecimentoRepetido: async function (idMembro, idConhecimento) {
-    resultado = await bancoDeDados.query(`SELECT * FROM "relacao_membros_conhecimentos" WHERE  "id_membro"  = ${idMembro} AND "id_conhecimento" = ${idConhecimento};`)
-    if (Object.keys(resultado.rows).length === 0) {
-      return false
-    }
-    return resultado.rows[0] 
-  },
-  /**
-  * Lista os id's e o nível de proficiência de cada conhecimento associado ao membro
-  * @memberof MembroRepositorio
-  * @async
-  * @method listarConhecimentos
-  * @parameter {Integer} idMembro - identificador do membro ao qual será feito a listagem
-  * @returns {Object} Retorna um array com o id e nível de todos os conhecimentos associados ao membro
-  */
-  listarConhecimentos: async function (idMembro) {
-    resultado = await bancoDeDados.query(`SELECT * FROM "relacao_membros_conhecimentos" WHERE  "id_membro"  = ${idMembro};`)
-    return resultado.rows
-  },
-  /**
-  * Procura o nome de determinado conhecimento, dado seu identificador numérico
-  * @memberof MembroRepositorio
-  * @async
-  * @method buscarNomeConhecimento
-  * @parameter {Integer} idConhecimento - identificador numérico do conhecimento
-  * @returns {String} Retorna o nome do conhecimento associado ao id fornecido
-  */
-  buscarNomeConhecimento: async function (idConhecimento) {
-    resultado = await bancoDeDados.query(`SELECT "conhecimento" FROM "conhecimentos" WHERE  "id_conhecimento"  = ${idConhecimento};`)
-    return resultado.rows[0].conhecimento
   }
-
 }
 
 module.exports = MembroRepositorio

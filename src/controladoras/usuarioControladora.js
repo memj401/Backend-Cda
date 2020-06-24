@@ -101,7 +101,7 @@ const usuarioControladora = {
 			return resposta.status(400).json({erro: 'Requisição Vazia'})
 		}
 		
-		if(dados.nome){
+		if(dados.nomeDeUsuario){
 			const usuarioJaExiste = await usuarioRepositorio.buscar(dados.nome)
 			
 			if (usuarioJaExiste) {

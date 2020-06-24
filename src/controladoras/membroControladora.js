@@ -18,7 +18,7 @@ const MembroControladora = {
     const membros = await membroRepositorio.buscarTodos()
     
     if (membros.length === 0) {
-        return resposta.status(404).json({erro: 'Não Há Membros no Banco de Dados'})
+      return resposta.status(404).json({erro: 'Não Há Membros no Banco de Dados'})
     } 
 
     return resposta.status(200).json(membros)
@@ -67,14 +67,6 @@ const MembroControladora = {
       return resposta.status(404).json({erro :'Membro não Encontrado' })
     }
     
-    const conhecimentos = await membroRepositorio.listarConhecimentos(idMembro)
-    for (i = 0; i <  conhecimentos.length; i++) {
-      conhecimentos[i].conhecimento = await membroRepositorio.buscarNomeConhecimento(conhecimentos[i].id_conhecimento)
-      delete conhecimentos[i].id_membro
-      delete conhecimentos[i].id_conhecimento 
-    }
-
-    membro.conhecimentos = conhecimentos
     return resposta.status(200).json(membro)
   },
     /**
@@ -88,8 +80,8 @@ const MembroControladora = {
     */
   inserir: async function (requisicao, resposta) {
     const dados = requisicao.body
-    const somenteDigitosMatricula = /^\d+$/.test(dados.matricula) //Checa se o campo da matrícula tem somente dígitos
-    const somenteDigitosRfid = /^\d+$/.test(dados.rfid)          //Checa se o campo do rfid tem somente dígitos
+    const somenteDigitosMatricula = /^\d+$/.test(dados.matricula) //Expressão Regular Checa se o campo da matrícula tem somente dígitos
+    const somenteDigitosRfid = /^\d+$/.test(dados.rfid)          // Expressão Regular Checa se o campo do rfid tem somente dígitos
     
     
     if (!dados.nome || !dados.cargo || !dados.matricula || !dados.rfid) {
@@ -137,7 +129,7 @@ const MembroControladora = {
     const membroExistente = await membroRepositorio.buscarUm(idMembro)
     
     if (Object.keys(dados).length === 0) {
-       return resposta.status(404).json({erro: 'Requisição Vazia'})
+      return resposta.status(404).json({erro: 'Requisição Vazia'})
     }
 
     if (!membroExistente) {
@@ -146,9 +138,9 @@ const MembroControladora = {
 
     if (dados.matricula || dados.matricula === 0) {
       
-      if (dados.matricula.length !== 9 || !somenteDigitosMatricula) {
-        return resposta.status(400).json({erro : 'Matrícula Inválida'})
-      }
+    if (dados.matricula.length !== 9 || !somenteDigitosMatricula) {
+      return resposta.status(400).json({erro : 'Matrícula Inválida'})
+    }
       
       const matriculaJaExiste = await membroRepositorio.buscarUmPor('matricula', dados.matricula)
       
@@ -191,44 +183,6 @@ const MembroControladora = {
 
     await membroRepositorio.remover(idMembro)
     return resposta.status(200).json({Resultado :'Membro Deletado com Sucesso'})
-  },
-    /**
-        * Lida com requisições POST recebendo o id e os conhecimentos a serem adicionados ao membro e inserindo os conhecimentos no banco de dados no membro cujo id foi enviado, caso o membro não exista retorna um erro(404),
-        * caso não sejam enviados todos os campos ou o campo de conhecimentos não esteja formatado adequadamente é enviado um erro(400)
-        * @memberof membroControladora
-        * @method inserirConhecimentoDoMembro
-        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
-        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
-        * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
-    */
-  inserirConhecimentoDoMembro: async function (requisicao, resposta) {
-    const idMembro = requisicao.params.id
-    const corpo = requisicao.body
-    const conhecimento = corpo.conhecimento
-    const nivel = corpo.nivel
-    const membroExiste = await membroRepositorio.buscarUm(idMembro)
-    let idConhecimento = await membroRepositorio.buscarIdConhecimento(conhecimento)
-
-    if (!membroExiste) {
-      return resposta.status(404).json({erro : 'Membro Não Encontrado'})
-    }
-
-    if (nivel !== 'iniciante' &&  nivel !== 'intermediario' &&  nivel !== 'avancado') {
-      return resposta.status(400).json({erro : 'Nivel de Conhecimento Inválido'})
-    }
-    
-    if (!idConhecimento) {
-      idConhecimento = await membroRepositorio.inserirConhecimento(conhecimento)
-      await membroRepositorio.inserirConhecimentoDoMembro(idMembro,idConhecimento,nivel)
-    } else {
-      const conhecimentoRepetido = await membroRepositorio.verficarConhecimentoRepetido(idMembro, idConhecimento)
-      if (conhecimentoRepetido) {
-        return resposta.status(400).json({erro : 'Membro Já Possui Este Conhecimento'})
-      }
-      await membroRepositorio.inserirConhecimentoDoMembro(idMembro,idConhecimento,nivel)
-    }
-    
-    return resposta.status(200).json(corpo)
   }
 }
 

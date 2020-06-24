@@ -36,7 +36,7 @@ const UsuarioRepositorio = {
 	*	@async
 	*	@method inserir
 	*	@parameter {Object} dados - Dados do usuário a ser adicionado
-	*	@parameter {String} dados.nome - Nome do usuário
+	*	@parameter {String} dados.nomeDeUsuario - Nome do usuário
 	*	@parameter {String} dados.senha - Senha do usuário
 	*	@parameter {String} dados.permissao - Nível de acesso do usuário
 	*	@returns {Boolean} Retorno verdadeiro utilizado apenas para determinar o fim correto da função
@@ -60,7 +60,7 @@ const UsuarioRepositorio = {
 	*	@returns {Boolean} Retorno verdadeiro utilizado apenas para determinar o fim correto da função
 	*/
 	editar: async function (dados, usuario) {
-		const parametros = ['nomeDeUsuario','permissao']
+		const parametros = ['nome','permissao']
 		let queryFinal = 'UPDATE "usuarios" SET '
 		let parametroAnteriorFoiAtualizado = false
 		for (i = 0; i < parametros.length; ++i) {
