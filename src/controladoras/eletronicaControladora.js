@@ -1,5 +1,5 @@
 const membroRepositorio = require('../repositorios/membro')
-const rfidRepositorio = require('../repositorios/rfid')
+const acessoRepositorio = require('../repositorios/rfidAcesso')
 
 /**
     * Controladora de funções envolvendo RFID e a requisição HTTP
@@ -23,7 +23,7 @@ const pyControladora = {
             valido: (buscaRfid != undefined), // testar isso
             nome: (buscaRfid !=undefined) ? buscaRfid.nome : "Cartão Inválido"
         }
-        rfidRepositorio.inserir(informaçõesDaEntrada)
+        acessoRepositorio.inserir(informaçõesDaEntrada)
         return resposta.status(200).end()
     },
     /**
@@ -35,7 +35,7 @@ const pyControladora = {
         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
     */
     buscarUltimo: async function (requisicao, resposta){
-        const dados = await rfidRepositorio.buscarUltima()
+        const dados = await acessoRepositorio.buscarUltima()
         if (dados.valido === true) { //[1] é a coluna da validação, se o RFID for valido ou seja igual a true n pode cadastrar ele denovo
             return resposta.status(400).json({erro: "O último cartão passado ja foi cadastrado passe um cartão não cadastrado e tente novamente"})
         }
@@ -52,9 +52,9 @@ const pyControladora = {
         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
     */
     listarTodos: async function (requisicao, resposta){
-        const dados = await rfidRepositorio.buscarTodos()
+        const dados = await acessoRepositorio.buscarTodos()
         return resposta.status(200).json(dados)
     }
 }
 
-module.exports = pyControladora
+module.exports = eletronicaControladora

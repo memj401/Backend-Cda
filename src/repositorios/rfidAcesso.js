@@ -91,4 +91,4 @@ const rfid = {
     // } //Pra n ficar guardando dados desnecessários
 }
 
-module.exports = rfid
+module.exports = rfidAcesso

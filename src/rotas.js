@@ -8,7 +8,7 @@ const usuarioControladora = require('./controladoras/usuarioControladora')
 const sessaoControladora = require('./controladoras/sessaoControladora')
 const conhecimentoControladora = require('./controladoras/conhecimentoControladora')
 const conhecimentoDoMembroControladora = require('./controladoras/conhecimentoDoMembroControladora')
-const pyControladora = require('./controladoras/pyControladora')
+const eletronicaControladora = require('./controladoras/eletronicaControladora')
 
 
 const roteador = new Roteador()
@@ -50,9 +50,9 @@ roteador.patch('/membros/:id_membro/conhecimentos/:id_conhecimento', conheciment
 roteador.delete('/membros/:id_membro/conhecimentos/:id_conhecimento', conhecimentoDoMembroControladora.remover)
 
 //Funcionalidades da parte eletrônica 
-roteador.get('/rfid/cadastro', pyControladora.buscarUltimo)
-roteador.post('/rfid', pyControladora.receber)
-roteador.get('/rfid/log', pyControladora.listarTodos)
+roteador.get('/rfid/cadastro', eletronicaControladora.buscarUltimo)
+roteador.post('/rfid', eletronicaControladora.receber)
+roteador.get('/rfid/log', eletronicaControladora.listarTodos)
 
 //Funcionalidades relacionadas aos horários de permanência
 roteador.get('/horarios', membroControladora.listarTodos)
