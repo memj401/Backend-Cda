@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS "rfidlog";
+DROP TABLE IF EXISTS "rfid_acesso";
 
-CREATE TABLE "rfidlog"(
+CREATE TABLE "rfid_acesso"(
   "nome" VARCHAR NOT NULL,	
   "rfid" VARCHAR NOT NULL,
   "valido" BOOLEAN NOT NULL,

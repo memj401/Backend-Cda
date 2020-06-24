@@ -13,7 +13,7 @@ const rfidAcesso = {
         * @returns {Object} Uma linha da tabela com os dados da entrada mais recente
     */
     buscarUltima: async function() {
-        const resultado = await bancoDeDados.query(`SELECT * FROM "rfidlog" ORDER BY "horario" DESC LIMIT 1;`)
+        const resultado = await bancoDeDados.query(`SELECT * FROM "rfid_acesso" ORDER BY "horario" DESC LIMIT 1;`)
         return (resultado.rows[0])
     },
     /**
@@ -25,7 +25,7 @@ const rfidAcesso = {
         * @param {Boolean} dados.valido Um booleano que indica se o cartão é valido ou não 
     */
     inserir: async function(dados){
-        await bancoDeDados.query(`INSERT INTO "rfidlog" ("nome","rfid","valido","data","horario") 
+        await bancoDeDados.query(`INSERT INTO "rfid_acesso" ("nome","rfid","valido","data","horario") 
             VALUES ('${dados.nome}', '${dados.rfid}', ${dados.valido}, CURRENT_DATE, LOCALTIME);`,
         function (erro,resposta) {
             if (erro) {
@@ -40,9 +40,9 @@ const rfidAcesso = {
         * @returns {Array} Um array de objetos contendo todas as linhas da tabela
     */
     buscarTodos: async function(){
-        const historico = await bancoDeDados.query(`SELECT * FROM "rfidlog" ORDER BY "data" DESC,"horario" DESC;`)
+        const historico = await bancoDeDados.query(`SELECT * FROM "rfid_acesso" ORDER BY "data" DESC,"horario" DESC;`)
         const datasFormatadas = await bancoDeDados.query(`SELECT "horario", TO_CHAR("data", 'dd/mm/yyyy') 
-            FROM "rfidlog" ORDER BY "data" DESC,"horario" DESC;`)
+            FROM "rfid_acesso" ORDER BY "data" DESC,"horario" DESC;`)
         for (var i = 0; i < historico.rows.length; i++) {
             historico.rows[i].data = datasFormatadas.rows[i].to_char
         }

@@ -52,7 +52,7 @@ roteador.delete('/membros/:id_membro/conhecimentos/:id_conhecimento', conhecimen
 //Funcionalidades da parte eletrônica 
 roteador.get('/rfid/cadastro', eletronicaControladora.buscarUltimo)
 roteador.post('/rfid', eletronicaControladora.receber)
-roteador.get('/rfid/log', eletronicaControladora.listarTodos)
+roteador.get('/rfid/acessos', eletronicaControladora.listarTodos)
 
 //Funcionalidades relacionadas aos horários de permanência
 roteador.get('/horarios', membroControladora.listarTodos)
