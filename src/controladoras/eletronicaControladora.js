@@ -6,7 +6,7 @@ const acessoRepositorio = require('../repositorios/rfidAcesso')
     * @namespace pyControladora
 */
 
-const pyControladora = {
+const eletronicaControladora = {
     /**
         * Lida com a requisição post recebendo o valor do rfid e colocando no banco de dados
         * @memberof pyControladora

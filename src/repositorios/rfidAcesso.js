@@ -5,7 +5,7 @@ const bancoDeDados = require('../bancoDeDados/index')
     * @namespace repositorioRfid
 */
 
-const rfid = {
+const rfidAcesso = {
     /**
         * Busca a entrada mais recente no banco de dados
         * @memberof repositorioRfid
