@@ -1,14 +1,14 @@
 const bancoDeDados = require('../bancoDeDados/index')
 
 /**
-    * Repositório de funções do banco de dados do RFID
-    * @namespace repositorioRfid
+    * Repositório de funções do banco de dados do RFID de acesso a porta
+    * @namespace repositorioAcesso
 */
 
 const rfidAcesso = {
     /**
         * Busca a entrada mais recente no banco de dados
-        * @memberof repositorioRfid
+        * @memberof repositorioAcesso
         * @method buscarUltima
         * @returns {Object} Uma linha da tabela com os dados da entrada mais recente
     */
@@ -18,7 +18,7 @@ const rfidAcesso = {
     },
     /**
         *Insere uma entrada no banco de dados
-        * @memberof repositorioRfid
+        * @memberof repositorioAcesso
         * @method inserir
         * @param {Object} dados Um objeto que contém os dados necessários para criar a entrada no banco de dados
         * @param {String} dados.rfid Uma string contendo o valor o código do rfid formatado adequadamente
@@ -35,7 +35,7 @@ const rfidAcesso = {
     },
     /**
         * Busca todas as entradas do banco de dados em ordem da mais recente para menos recente
-        * @memberof repositorioRfid
+        * @memberof repositorioAcesso
         * @method buscarTodos
         * @returns {Array} Um array de objetos contendo todas as linhas da tabela
     */
