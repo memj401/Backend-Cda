@@ -28,7 +28,7 @@ const eletronicaControladora = {
     },
     receberPermanencia: async function (requisicao, resposta){
         const dados = requisicao.body
-        const buscaMembro = await membroRepositorio.buscarUm("rfid",dados.rfid)
+        const buscaMembro = await membroRepositorio.buscarUmPor("rfid",dados.rfid)
         if (buscaMembro == undefined){
             return resposta.status(400).json({erro: "O cartão é inválido"})
         }

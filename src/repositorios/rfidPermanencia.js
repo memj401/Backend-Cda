@@ -6,17 +6,17 @@ const bancoDeDados = require('../bancoDeDados/index')
 */
 
 const rfidPermanencia = {
-    inserirEntrada: async function(dados){
-        await bancoDeDados.query(`INSERT INTO "rfid_acesso" ("nome","data","entrada") 
-            VALUES ('${dados.nome}', CURRENT_DATE, LOCALTIME);`,
+    inserirEntrada: async function(nome){
+        await bancoDeDados.query(`INSERT INTO "rfid_permanencia" ("nome","data","entrada") 
+            VALUES ('${nome}', CURRENT_DATE, LOCALTIME);`,
         function (erro,resposta) {
             if (erro) {
                 console.log(erro)
             }
         })
     },
-    inserirSaida: async function(dados){
-        await bancoDeDados.query(`UPDATE "rfid_permanencia" SET "saida"  = LOCALTIME WHERE "nome" = '${dados.nome}' AND "data" = CURRENT_DATE;`,
+    inserirSaida: async function(nome){
+        await bancoDeDados.query(`UPDATE "rfid_permanencia" SET "saida"  = LOCALTIME WHERE "nome" = '${nome}' AND "data" = CURRENT_DATE;`,
         function (erro,resposta){
             if (erro) {
                 console.log(erro)
@@ -24,18 +24,22 @@ const rfidPermanencia = {
         })
     },
     buscarUm: async function(nome){
-        const busca = await bancoDeDados.query(`SELECT * FROM "rfid_permanencia" WHERE "nome" = '${nome}' AND "data" = CURRENT_DATE;`,
+        const busca = await bancoDeDados.query(`SELECT * FROM "rfid_permanencia" WHERE age("data", CURRENT_DATE) > '1 day' ;`,
         function (erro,resposta){
             if(erro){
                 console.log(erro)
             }
         })
-        return busca.rows
+        console.log(busca)
+        if (busca) {
+            return busca.rows[0]
+        }
+        return false
     },
     buscarTodos: async function(){
-        const historico = await bancoDeDados.query(`SELECT * FROM "rfid_acesso" ORDER BY "data" DESC,"entrada" DESC;`)
-        const datasFormatadas = await bancoDeDados.query(`SELECT "horario", TO_CHAR("data", 'dd/mm/yyyy') 
-            FROM "rfid_acesso" ORDER BY "data" DESC,"horario" DESC;`)
+        const historico = await bancoDeDados.query(`SELECT * FROM "rfid_permanencia" ORDER BY "data" DESC,"entrada" DESC;`)
+        const datasFormatadas = await bancoDeDados.query(`SELECT "entrada", TO_CHAR("data", 'dd/mm/yyyy') 
+            FROM "rfid_permanencia" ORDER BY "data" DESC,"entrada" DESC;`)
         for (var i = 0; i < historico.rows.length; i++) {
             historico.rows[i].data = datasFormatadas.rows[i].to_char
         }
