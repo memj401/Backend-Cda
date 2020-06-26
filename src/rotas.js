@@ -50,9 +50,11 @@ roteador.patch('/membros/:id_membro/conhecimentos/:id_conhecimento', conheciment
 roteador.delete('/membros/:id_membro/conhecimentos/:id_conhecimento', conhecimentoDoMembroControladora.remover)
 
 //Funcionalidades da parte eletrônica 
-roteador.get('/rfid/cadastro', eletronicaControladora.buscarUltimo)
-roteador.post('/rfid', eletronicaControladora.receber)
-roteador.get('/rfid/acessos', eletronicaControladora.listarTodos)
+roteador.get('/cadastro', eletronicaControladora.buscarParaCadastro)
+roteador.post('/rfid/acesso', eletronicaControladora.receberAcesso)
+roteador.get('/relatorios/acessos', eletronicaControladora.listarTodos)
+roteador.post('/rfid/permanencia',eletronicaControladora.receberPermanencia)
+roteador.get('/relatorios/permanencia', eletronicaControladora.listarPermanencias)
 
 //Funcionalidades relacionadas aos horários de permanência
 roteador.get('/horarios', membroControladora.listarTodos)
