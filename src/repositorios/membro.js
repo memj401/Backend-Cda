@@ -89,12 +89,8 @@ const MembroRepositorio = {
   * @returns {Boolean} Retorno verdadeiro utilizado apenas para determinar o fim da função
   */
   inserir: async function (dados)  {
-    await bancoDeDados.query(`INSERT INTO "membros" ("nome","cargo","matricula","rfid") VALUES ( '${dados.nome}', '${dados.cargo}', '${dados.matricula}', '${dados.rfid}');`, 
-    function (erro,resposta) {
-      if (erro) {
-      console.log(erro)
-      }
-   })
+    await bancoDeDados.query(`INSERT INTO "membros" ("nome","cargo","matricula","rfid") 
+      VALUES ( '${dados.nome}', '${dados.cargo}', '${dados.matricula}', '${dados.rfid}');`)
     return true
  },
   /**
@@ -132,12 +128,7 @@ const MembroRepositorio = {
   * @parameter {Integer} id - Identificação numérica do membro a ser pesquisado no banco de dados
   */
   remover: async function  (id) {
-    await bancoDeDados.query(`DELETE from "membros" WHERE "id_membro" = ${id};`, 
-    function  (erro, resposta) {
-      if (erro) {
-        console.log(erro)
-      }
-    })
+    await bancoDeDados.query(`DELETE from "membros" WHERE "id_membro" = ${id};`)
   }
 }
 

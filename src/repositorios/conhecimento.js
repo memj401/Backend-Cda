@@ -27,12 +27,7 @@ const ConhecimentoRepositorio = {
   * @returns {Boolean} Retorno verdadeiro utilizado apenas para determinar o fim da função
   */
 	remover: async function (id) {
-		await bancoDeDados.query(`DELETE FROM "conhecimentos" WHERE "id_conhecimento" = ${id};`,
-			async function (erro, resposta) {
-				if (erro) {
-					console.log(erro)
-				}
-			})
+		await bancoDeDados.query(`DELETE FROM "conhecimentos" WHERE "id_conhecimento" = ${id};`)
 		return true
 	},
   /**

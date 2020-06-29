@@ -3,23 +3,13 @@ const bancoDeDados = require('../bancoDeDados/index')
 const ConhecimentoDoMembroRepositorio = {
 	inserir: async function (idMembro,idConhecimento, nivel) {
 		await bancoDeDados.query(`INSERT INTO "relacao_membros_conhecimentos"("id_membro", "id_conhecimento", "nivel") 
-      	VALUES (${idMembro}, ${idConhecimento},'${nivel}');`,
-      	function (erro, resposta) {
-        	if (erro) {
-          	console.log(erro)
-        	}
-      	})
+      	VALUES (${idMembro}, ${idConhecimento},'${nivel}');`)
     	return true
 	},
 
 	remover: async function (idMembro, idConhecimento) {
     await bancoDeDados.query(`DELETE FROM "relacao_membros_conhecimentos" 
-      WHERE "id_membro" = ${idMembro} AND "id_conhecimento" = ${idConhecimento}`,
-      function (erro,resposta) {
-        if (erro) {
-          console.log(erro)
-        }
-      })
+      WHERE "id_membro" = ${idMembro} AND "id_conhecimento" = ${idConhecimento}`)
     return true
 	},
 

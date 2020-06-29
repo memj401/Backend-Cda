@@ -26,12 +26,7 @@ const rfidAcesso = {
     */
     inserir: async function(dados){
         await bancoDeDados.query(`INSERT INTO "rfid_acesso" ("nome","rfid","valido","data","horario") 
-            VALUES ('${dados.nome}', '${dados.rfid}', ${dados.valido}, CURRENT_DATE, LOCALTIME);`,
-        function (erro,resposta) {
-            if (erro) {
-                console.log(erro)
-            }
-        })
+            VALUES ('${dados.nome}', '${dados.rfid}', ${dados.valido}, CURRENT_DATE, LOCALTIME);`)
     },
     /**
         * Busca todas as entradas do banco de dados em ordem da mais recente para menos recente

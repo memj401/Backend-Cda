@@ -8,29 +8,15 @@ const bancoDeDados = require('../bancoDeDados/index')
 const rfidPermanencia = {
     inserirEntrada: async function(nome){
         await bancoDeDados.query(`INSERT INTO "rfid_permanencia" ("nome","data","entrada") 
-            VALUES ('${nome}', CURRENT_DATE, LOCALTIME);`,
-        function (erro,resposta) {
-            if (erro) {
-                console.log(erro)
-            }
-        })
+            VALUES ('${nome}', CURRENT_DATE, LOCALTIME);`)
     },
     inserirSaida: async function(nome){
-        await bancoDeDados.query(`UPDATE "rfid_permanencia" SET "saida"  = LOCALTIME WHERE "nome" = '${nome}' AND "data" = CURRENT_DATE;`,
-        function (erro,resposta){
-            if (erro) {
-                console.log(erro)
-            }
-        })
+        await bancoDeDados.query(`UPDATE "rfid_permanencia" SET "saida"  = LOCALTIME WHERE "nome" = '${nome}' AND "data" = CURRENT_DATE;`)
     },
     buscarUm: async function(nome){
-        const busca = await bancoDeDados.query(`SELECT * FROM "rfid_permanencia" WHERE age("data", CURRENT_DATE) > '1 day' ;`,
-        function (erro,resposta){
-            if(erro){
-                console.log(erro)
-            }
-        })
-        console.log(busca)
+        const busca = await bancoDeDados.query(`SELECT * FROM "rfid_permanencia" 
+            WHERE "nome" = '${nome}' AND "data" BETWEEN CURRENT_DATE AND CURRENT_DATE;`)
+        console.log(busca.rows)
         if (busca) {
             return busca.rows[0]
         }

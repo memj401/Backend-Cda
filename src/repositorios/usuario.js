@@ -42,12 +42,8 @@ const UsuarioRepositorio = {
 	*	@returns {Boolean} Retorno verdadeiro utilizado apenas para determinar o fim correto da função
 	*/
 	inserir: async function (dados) {
-		await bancoDeDados.query(`INSERT INTO "usuarios" ("nome", "senha" ,"permissao") VALUES ('${dados.nome}', '${dados.senha}', ${dados.permissao});`,
-			function (erro, resposta) {
-			if (erro) {
-				console.log(erro)
-			} 
-		})
+		await bancoDeDados.query(`INSERT INTO "usuarios" ("nome", "senha" ,"permissao") 
+			VALUES ('${dados.nome}', '${dados.senha}', ${dados.permissao});`)
 		return true
 	},
 	/**
@@ -73,12 +69,7 @@ const UsuarioRepositorio = {
 			}
 		}
 		queryFinal += ` WHERE "nome" = '${usuario}';`
-		await bancoDeDados.query(queryFinal, 
-			function (erro, resposta) {
-			if (erro) {
-				console.log(erro)
-			}
-		})
+		await bancoDeDados.query(queryFinal)
 		return true
 	},
 	/**
@@ -90,12 +81,7 @@ const UsuarioRepositorio = {
 	*	@returns {Boolean} Retorno verdadeiro utilizado apenas para determinar o fim correto da função
 	*/
 	remover: async function (usuario) {
-		await bancoDeDados.query(`DELETE from "usuarios" WHERE "nome" = '${usuario}'`,
-			function (erro, resposta) {
-			if (erro) {
-				console.log(erro)
-			}
-		})
+		await bancoDeDados.query(`DELETE from "usuarios" WHERE "nome" = '${usuario}'`)
 		return true
 	},
 	/**
