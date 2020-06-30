@@ -9,6 +9,7 @@ const sessaoControladora = require('./controladoras/sessaoControladora')
 const conhecimentoControladora = require('./controladoras/conhecimentoControladora')
 const conhecimentoDoMembroControladora = require('./controladoras/conhecimentoDoMembroControladora')
 const eletronicaControladora = require('./controladoras/eletronicaControladora')
+const horariosControladora = require('./controladoras/horariosControladora')
 
 
 const roteador = new Roteador()
@@ -57,10 +58,10 @@ roteador.post('/rfid/permanencia',eletronicaControladora.receberPermanencia)
 roteador.get('/relatorios/permanencia', eletronicaControladora.listarPermanencias)
 
 //Funcionalidades relacionadas aos horários de permanência
-roteador.get('/horarios', membroControladora.listarTodos)
-roteador.get('/horarios/listar/:parametro', membroControladora.listar)
-roteador.post('/horarios', membroControladora.inserir)
-roteador.put('/horarios/:id', membroControladora.editar)
-roteador.delete('/horarios/:id', membroControladora.remover)
+roteador.get('/horarios', horariosControladora.listarTodos)
+roteador.get('/horarios/listar/:parametro', horariosControladora.listar)
+roteador.post('/horarios', horariosControladora.inserir)
+roteador.put('/horarios/:id', horariosControladora.editar)
+roteador.delete('/horarios/:id', horariosControladora.remover)
 
 module.exports = roteador

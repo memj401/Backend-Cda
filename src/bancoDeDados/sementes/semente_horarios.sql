@@ -1,6 +1,6 @@
 DELETE FROM "horarios";
 
-INSERT INTO "horarios"("dia_da_semana", "entrada", "saida", "id_membro")
+INSERT INTO "horarios"("dia", "entrada", "saida", "id_membro")
 VALUES
 ((SELECT (array['segunda', 'terça', 'quarta', 'quinta', 'sexta'])[floor(random() * 5 + 1)]), 08, 10, 1),
 ((SELECT (array['segunda', 'terça', 'quarta', 'quinta', 'sexta'])[floor(random() * 5 + 1)]), 10, 12, 2),
