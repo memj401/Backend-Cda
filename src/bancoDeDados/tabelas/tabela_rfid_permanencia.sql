@@ -4,5 +4,6 @@ CREATE TABLE "rfid_permanencia"(
   "nome" VARCHAR,
   "data" DATE NOT NULL,
   "entrada" TIME NOT NULL,
-  "saida" TIME  
+  "saida" TIME,
+  "valido" BOOLEAN NOT NULL  
 );

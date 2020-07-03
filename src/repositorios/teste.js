@@ -12,13 +12,17 @@ async function historicoo(){ //ou semanal sei la
     return historico.rows
 }
 
-const historico = historicoo()
-console.log(historico)
-ejs.renderFile("../relatorios/template.ejs", {tabela:historico}, (erro,html) =>{
-    if (erro){
-        console.log(erro)
-    }
-    else {
-        console.log(html)
-    }
-})
+async function teste() {
+	const historico = historicoo()
+	console.log(historico)
+	ejs.renderFile("../relatorios/template.ejs", {tabela:historico}, (erro,html) =>{
+    	if (erro){
+        	console.log(erro)
+    	}
+    	else {
+        	console.log(html)
+    	}
+	})
+}
+
+teste()
