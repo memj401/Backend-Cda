@@ -14,7 +14,7 @@ const rfidAcesso = {
         * @returns {Object} Uma linha da tabela com os dados da entrada mais recente
     */
     buscarUltima: async function() {
-        const resultado = await bancoDeDados.query(`SELECT * FROM "rfid_acesso" ORDER BY "horario" DESC LIMIT 1;`)
+        const resultado = await bancoDeDados.query(`SELECT * FROM "rfid_acesso" ORDER BY "data" DESC,"horario" DESC LIMIT 1;`)
         return (resultado.rows[0])
     },
     /**
