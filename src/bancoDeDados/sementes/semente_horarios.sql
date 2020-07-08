@@ -1,10 +1,30 @@
 DELETE FROM "horarios";
 
-INSERT INTO "horarios"("dia", "entrada", "saida", "id_membro")
+INSERT INTO "horarios"("dia", "entrada", "saida")
 VALUES
-((SELECT (array['segunda', 'terça', 'quarta', 'quinta', 'sexta'])[floor(random() * 5 + 1)]), 08, 10, 1),
-((SELECT (array['segunda', 'terça', 'quarta', 'quinta', 'sexta'])[floor(random() * 5 + 1)]), 10, 12, 2),
-((SELECT (array['segunda', 'terça', 'quarta', 'quinta', 'sexta'])[floor(random() * 5 + 1)]), 14, 16, 3),
-((SELECT (array['segunda', 'terça', 'quarta', 'quinta', 'sexta'])[floor(random() * 5 + 1)]), 16, 18, 4);
+('segunda',08,10),
+('segunda',10,12),
+('segunda',12,14),
+('segunda',14,16),
+('segunda',16,18),
+('terca',08,10),
+('terca',10,12),
+('terca',12,14),
+('terca',14,16),
+('terca',16,18),
+('quarta',08,10),
+('quarta',10,12),
+('quarta',12,14),
+('quarta',14,16),
+('quarta',16,18),
+('quinta',08,10),
+('quinta',10,12),
+('quinta',12,14),
+('quinta',14,16),
+('quinta',16,18),
+('sexta',08,10),
+('sexta',10,12),
+('sexta',12,14),
+('sexta',14,16),
+('sexta',16,18)
 
-/*Gera horários de exemplo para 4 membros registrados*/

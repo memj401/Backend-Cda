@@ -1,4 +1,4 @@
-const horariosRepositorio = require('../repositorios/horarios')
+const horariosRepositorio = require('../repositorios/horarioDoMembro')
 const membroRepositorio = require('../repositorios/membro')
 
 /**
@@ -9,7 +9,7 @@ const membroRepositorio = require('../repositorios/membro')
 const HorariosControladora = {
 
     listarTodos: async function(requisicao, resposta) {
-        const horarios = await horariosRepositorio.buscarTodos()
+        const horarios = await horariosRepositorio.buscarTudo()
 
         if (horarios.length === 0) {
             return resposta.status(404).json({erro: 'Não há horários no Banco de Dados'})
@@ -43,7 +43,7 @@ const HorariosControladora = {
         const somenteDigitosEntrada = /^\d+$/.test(dados.entrada)
         const somenteDigitosSaida = /^\d+$/.test(dados.saida)
 
-        if(!dados.id_membro|| !dados.entrada || !dados.saida || !dados.dia){
+        if(!dados.id || !dados.entrada || !dados.saida || !dados.dia){
             return resposta.status(404).json({erro: 'Número Inválido de Campos de Entrada'})
         }
 
@@ -51,19 +51,19 @@ const HorariosControladora = {
             return resposta.status(404).json({erro: 'Dado(s) de Entrada Numérica Inválido(s)'})
         }
 
-        const idJaExiste = await horariosRepositorio.buscarMembro(dados.id_membro)
-        const horarioOcupado = await horariosRepositorio.buscarHora(dados.dia, dados.entrada) 
+        const idJaExiste = horariosRepositorio.buscarUmPor("id_membro", dados.id)
+        const horarioOcupado = horariosRepositorio.buscarHora(dados.dia, dados.entrada) 
 
-        if(idJaExiste){
+        if(!idJaExiste){
             return resposta.status(404).json({erro: 'Membro Já Registrado'})
         }
 
-        if(horarioOcupado){
+        if(!horarioOcupado){
             return resposta.status(404).json({erro: 'Horário Já Ocupado'})
         }
 
-        await horariosRepositorio.inserir(dados.dia, dados.id_membro, dados.entrada, dados.saida)
-        const horarioInserido = await horariosRepositorio.buscarValidacao(dados.dia, dados.entrada, dados.id_membro)
+        await horariosRepositorio.inserir(dados.dia, dados.id, dados.entrada, dados.saida)
+        const horarioInserido = horariosRepositorio.buscarValidacao(dados.dia, dados.entrada, dados.id)
 
         return resposta.status(201).json(horarioInserido)
     },
@@ -74,7 +74,7 @@ const HorariosControladora = {
         const somenteDigitosEntrada = /^\d+$/.test(dados.entrada)
         const somenteDigitosSaida = /^\d+$/.test(dados.saida)  
     
-        const idJaExiste = await horariosRepositorio.buscarMembro(idMembro)
+        const idJaExiste = await horariosRepositorio.buscarUmPor('id_membro', idMembro)
         
         if (Object.keys(dados).length === 0) {
             return resposta.status(404).json({erro: 'Requisição Vazia'})
@@ -84,7 +84,7 @@ const HorariosControladora = {
             return resposta.status(404).json({erro: 'Membro não encontrado'})
         }
     
-        if (dados.id_membro === 0) {
+        if (dados.id === 0) {
             if (!somenteDigitosEntrada) {
                 return resposta.status(400).json({erro : 'Horário de Entrada Inválido'})
             }
@@ -106,7 +106,7 @@ const HorariosControladora = {
     remover: async function(requisicao, resposta) {
         const idMembro = requisicao.params.id 
         const dados = requisicao.body
-        const horarioExiste = await horariosRepositorio.buscarMembro(idMembro)
+        const horarioExiste = await horariosRepositorio.buscarUmPor('id_membro', idMembro)
         
         if(!horarioExiste){
             return resposta.status(404).json({erro: 'Membro Não Encontrado'})
