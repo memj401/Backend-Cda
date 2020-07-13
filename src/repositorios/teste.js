@@ -1,9 +1,9 @@
 const bancoDeDados = require('../bancoDeDados/index')
 const ejs = require('ejs');
+const puppeteer = require('puppeteer-core');
 
-async function historicoo(){ //ou semanal sei la
+async function historico(){ //ou semanal sei la
     const historico = await bancoDeDados.query(`SELECT * FROM "rfid_acesso" ORDER BY "data" DESC,"horario" DESC;`).catch(erro => console.log(erro))
-    return historico.rows
     const datasFormatadas = await bancoDeDados.query(`SELECT "horario", TO_CHAR("data", 'dd/mm/yyyy') 
         FROM "rfid_acesso" ORDER BY "data" DESC,"horario" DESC;`)
     for (var i = 0; i < historico.rows.length; i++) {
@@ -12,17 +12,20 @@ async function historicoo(){ //ou semanal sei la
     return historico.rows
 }
 
-async function teste() {
-	const historico = historicoo()
-	console.log(historico)
-	ejs.renderFile("../relatorios/template.ejs", {tabela:historico}, (erro,html) =>{
-    	if (erro){
-        	console.log(erro)
-    	}
-    	else {
-        	console.log(html)
-    	}
-	})
+async function fazerhtml(){
+    const tabela = await historico()
+    ejs.renderFile("../relatorios/template.ejs", {tabela:tabela},async (erro,html) => {
+        if (erro){
+            console.log(erro)
+        }
+        else {
+            console.log(html)
+	    const browser = await puppeteer.launch({executablePath:'/usr/bin/chromium-browser'})
+	    const page = await browser.newPage()
+	    await page.setContent(html)
+	    const pdf = await page.pdf({path:"./pdfteste.pdf"})
+        }
+    })
 }
 
-teste()
+fazerhtml()
