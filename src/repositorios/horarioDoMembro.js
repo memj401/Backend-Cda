@@ -7,7 +7,8 @@ const bancoDeDados = require('../bancoDeDados/index')
 
 const HorarioDoMembro = {
     inserir: async function (idMembro, idHorario) {
-		await bancoDeDados.query(`INSERT INTO "relacao_membros_horarios"("id_membro","id_horario");`)
+		await bancoDeDados.query(`INSERT INTO "relacao_membros_horarios"("id_membro","id_horario")
+            VALUES(${idMembro}, ${idHorario});`)
     	return true
     },
 
@@ -16,8 +17,11 @@ const HorarioDoMembro = {
     },
 
     buscarIdHorario: async function (Dia,HorarioEntrada){
-        id = await bancoDeDados.query(`SELECT * FROM "horarios" WHERE "dia" = '${Dia}' AND WHERE "entrada" = '${HorarioEntrada}';`)
-        return id.rows[0].id_horario
+        id = await bancoDeDados.query(`SELECT  * FROM "horarios" WHERE "dia" = '${Dia}' AND "entrada" = '${HorarioEntrada}';`)
+        if (id.rows.length !== 0) {
+            return id.rows[0].id_horario
+        }
+        return false
     },
 
     buscarMembro: async function (idHorario){
@@ -30,20 +34,14 @@ const HorarioDoMembro = {
         return membro
     },
 
-/**    buscarTudo: async function (){
-        lista = await bancoDeDados.query(`SELECT * FROM "horarios"`)
-        for( i=0; i<lista.length; i++){
-            dados.dia = lista.rows[i].dia
-            dados.dia.entrada = lista.rows[i].entrada
-            dados.dia.saida = lista.rows[i].saida
-            nomes = pegarMembro(lista.rows[i].id_horario)
-            for( j=0; j<nomes.length; j++){
-                dados.dia.entrada.nome = nomes[j]
-            }
+    checarMembro: async function(idMembro){
+        id = await bancoDeDados.query(`SELECT "id_membro" FROM "relacao_membros_horarios" WHERE "id_membro" = ${idMembro};`)
+        if (id.rows.length !== 0) {
+           return id.rows[0].id_membro 
         }
-        return dados
+        return false
     },
-*/
+
     buscarTudo: async function (){
         const lista = await bancoDeDados.query(`SELECT * FROM "horarios"`)
         var dados = {}
@@ -63,68 +61,11 @@ const HorarioDoMembro = {
         return dados
     },
 
-//-----------------------DAQUI PRA BAIXO TA TUDO ERRADO------------------------------//
-//-----------------------DAQUI PRA BAIXO TA TUDO ERRADO------------------------------//
-//-----------------------DAQUI PRA BAIXO TA TUDO ERRADO------------------------------//
-//-----------------------DAQUI PRA BAIXO TA TUDO ERRADO------------------------------//
-
-    editar: async function (dados, id)  {
-        const parametros = ['dia','entrada','saida']
-        let queryFinal = 'UPDATE "horarios" SET '
-        let parametroAnteriorFoiAtualizado = false
-        
-        for (i = 0; i < parametros.length; ++i) {
-            if (dados[parametros[i]]) {
-                if (parametroAnteriorFoiAtualizado) {
-                    queryFinal += ', '
-                }
-                queryFinal += `"${parametros[i]}" = '${dados[parametros[i]]}'`
-                parametroAnteriorFoiAtualizado = true
-            }
-        }
-        queryFinal += ` WHERE "id_membro" = ${id} RETURNING *;`
-        const resultado = await bancoDeDados.query(queryFinal)
+    editar: async function (idMembro,idHorario){
+        resultado = await bancoDeDados.query(`UPDATE "relacao_membros_horarios" SET "id_horario" = ${idHorario}  WHERE "id_membro" = ${idMembro} RETURNING *`)
         return resultado.rows[0]
-    },
+    }
 
-    buscarUmPor: async function (parametro, valor) {
-        const resultado = await bancoDeDados.query(`SELECT * FROM "horarios" WHERE "${parametro}" = '${valor}';`)
-            for( i=0; i<resultado.rows.length; ++i){
-                const aux = await bancoDeDados.query(`SELECT * FROM "membros" WHERE "id_membro" = ${resultado.rows[0].id};`)
-                resultado.rows[i].nome = aux.row[0].nome
-            }
-        return resultado.rows[0]
-    },
-
-    buscarTodos: async function(parametro, valor) {
-        let resultado;
-        if (parametro && valor) {
-            if (parametro === 'dia') {
-                resultado = await bancoDeDados.query(`SELECT * FROM "horarios" WHERE "${parametro}" ILIKE '${valor}%';`)
-            } else {
-                resultado = await bancoDeDados.query(`SELECT * FROM "horarios" WHERE "${parametro}" = '${valor}';`)
-            }
-        } else {
-            resultado = await bancoDeDados.query('SELECT * FROM "horarios";')
-        }
-
-        for( i=0; i<resultado.length; ++i){
-            const aux = await bancoDeDados.query(`SELECT * FROM "membros" WHERE "id_membro" = ${resultado.rows[0].id};`)
-            resultado.rows[i].nome = aux.row[0].nome
-        }
-
-        return resultado.rows
-    },
-
-    buscarHora: async function (valor_dia, valor_entrada) {
-        const resultado = await bancoDeDados.query(`SELECT * FROM "horarios" WHERE "dia" = '${valor_dia}' AND "entrada" = '${valor_entrada}';`)
-        return resultado.rows[0]
-    },
-
-    buscarValidacao: async function (valor_dia, valor_entrada, valor_id) {
-        const resultado = await bancoDeDados.query(`SELECT * FROM "horarios" WHERE "dia" = '${valor_dia}' AND "entrada" = '${valor_entrada}' AND "id_membro" = '${valor_id}';`)
-        return resultado.rows[0]
-    },
 }
 
 module.exports = HorarioDoMembro

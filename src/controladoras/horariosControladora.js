@@ -11,109 +11,113 @@ const HorariosControladora = {
     listarTodos: async function(requisicao, resposta) {
         const horarios = await horariosRepositorio.buscarTudo()
 
-        if (horarios.length === 0) {
-            return resposta.status(404).json({erro: 'Não há horários no Banco de Dados'})
+        if (horarios.length == 0) {
+            return resposta.status(404).json({erro: 'Não Há Horários No Banco de Dados'})
         }
 
-        return resposta.status(200).json(horarios)
-    },
-
-    listar: async function (requisicao, resposta) {
-        const valor = requisicao.body.valor
-        const parametro = requisicao.params.parametro
-
-        if(!valor){
-            return resposta.status(404).json({erro: 'Valor de Busca Inválida'})
-        }
-
-        if(parametro !== 'dia' && parametro !== 'entrada' && parametro !== 'saida' && parametro !== 'id_membro'){
-            return resposta.status(404).json({erro: 'Parâmetro de Busca Inválida'})
-        }
-
-        const horarios = await horariosRepositorio.buscarTodos(parametro,valor)
-        
-        if(horarios === 0){
-            return resposta.status(404).json({erro: 'Não foram encontrados membros'})
-        }
         return resposta.status(200).json(horarios)
     },
 
     inserir: async function(requisicao, resposta){
         const dados = requisicao.body
-        const somenteDigitosEntrada = /^\d+$/.test(dados.entrada)
-        const somenteDigitosSaida = /^\d+$/.test(dados.saida)
+        const idMembro = dados.id_membro
+        const horarioEntrada = dados.entrada
+        const dia = dados.dia
 
-        if(!dados.id || !dados.entrada || !dados.saida || !dados.dia){
-            return resposta.status(404).json({erro: 'Número Inválido de Campos de Entrada'})
+        function somenteDigitosEntrada(vetor){
+           return /^\d+$/.test(vetor)
         }
 
-        if(!somenteDigitosEntrada || !somenteDigitosSaida){
-            return resposta.status(404).json({erro: 'Dado(s) de Entrada Numérica Inválido(s)'})
+        if(!idMembro || !horarioEntrada || !dia){
+            return resposta.status(400).json({erro: 'Número Inválido de Campos de Entrada'})
         }
 
-        const idJaExiste = horariosRepositorio.buscarUmPor("id_membro", dados.id)
-        const horarioOcupado = horariosRepositorio.buscarHora(dados.dia, dados.entrada) 
-
-        if(!idJaExiste){
-            return resposta.status(404).json({erro: 'Membro Já Registrado'})
+        if(!somenteDigitosEntrada(idMembro)){
+            return resposta.status(400).json({erro: 'Novo Id de Membro Inválido'})
         }
 
-        if(!horarioOcupado){
-            return resposta.status(404).json({erro: 'Horário Já Ocupado'})
+        if(!somenteDigitosEntrada(horarioEntrada)){
+            return resposta.status(400).json({erro: 'Dado de Entrada Numérica Inválido'})
+        }
+        
+        const membroExiste = await membroRepositorio.buscarUm(idMembro)
+        
+        if(!membroExiste){
+            return resposta.status(404).json({erro: 'Membro Não Existente na Tabela de Membros'})
         }
 
-        await horariosRepositorio.inserir(dados.dia, dados.id, dados.entrada, dados.saida)
-        const horarioInserido = horariosRepositorio.buscarValidacao(dados.dia, dados.entrada, dados.id)
+        const testeMembro = await horariosRepositorio.checarMembro(idMembro)
 
-        return resposta.status(201).json(horarioInserido)
+        if(testeMembro){
+            return resposta.status(400).json({erro: 'Membro Já Registrado em outro horário'})
+        }
+
+        idHorario = await horariosRepositorio.buscarIdHorario(dia, horarioEntrada) 
+
+        if(!idHorario){
+            return resposta.status(404).json({erro: 'Horário Não Existente'})
+        }
+
+        await horariosRepositorio.inserir(idMembro, idHorario)
+        return resposta.status(201).json(await horariosRepositorio.buscarMembro(idHorario))
     },
 
     editar: async function(requisicao, resposta) {
-        const idMembro = requisicao.params.id 
+        const idMembro = requisicao.params.id_membro 
         const dados = requisicao.body
-        const somenteDigitosEntrada = /^\d+$/.test(dados.entrada)
-        const somenteDigitosSaida = /^\d+$/.test(dados.saida)  
-    
-        const idJaExiste = await horariosRepositorio.buscarUmPor('id_membro', idMembro)
+        horarioEntrada = dados.entrada
+        dia = dados.dia
+
+        const somenteDigitosEntrada = /^\d+$/.test(horarioEntrada)
         
-        if (Object.keys(dados).length === 0) {
-            return resposta.status(404).json({erro: 'Requisição Vazia'})
+        if (!horarioEntrada || !dia) {
+            return resposta.status(400).json({erro: 'Requisição Incompleta'})
+        }
+
+        const membroExiste = await membroRepositorio.buscarUm(idMembro)
+
+        if(!membroExiste){
+            return resposta.status(404).json({erro: 'Membro Não Existente na Tabela de Membros'})
+        }
+
+        testeMembro = await horariosRepositorio.checarMembro(idMembro)
+
+        if(!testeMembro){
+            return resposta.status(404).json({erro: 'Membro Não Registrado Nos Horários'})
+        }
+
+        if(!somenteDigitosEntrada){
+            return resposta.status(400).json({erro: 'Horário de Entrada Inválido'})
+        } 
+
+        idHorario = await horariosRepositorio.buscarIdHorario(dia, horarioEntrada)
+
+        if(!idHorario){
+            return resposta.status(404).json({erro: 'Horário Não Existente'})
         }
     
-        if (!idJaExiste) {
-            return resposta.status(404).json({erro: 'Membro não encontrado'})
-        }
-    
-        if (dados.id === 0) {
-            if (!somenteDigitosEntrada) {
-                return resposta.status(400).json({erro : 'Horário de Entrada Inválido'})
-            }
-            if (!somenteDigitosSaida) {
-                return resposta.status(400).json({erro : 'Horário de Saída Inválido'})
-            }
-          
-            const horaJaExiste = await membroRepositorio.buscarHora(dados.dia, dados.entrada)
-          
-            if (horaJaExiste) {   
-                return resposta.status(400).json({erro : 'Horário de Entrada Já Ocupado'})
-            }
-        }
-    
-        const horarioAtualizado = await horariosRepositorio.editar(dados, idMembro)
-        return resposta.status(200).json(horarioAtualizado)
+        const horarioAtualizado = await horariosRepositorio.editar(idMembro, idHorario)
+        return resposta.status(200).json(await horariosRepositorio.buscarMembro(idHorario))
     },
 
     remover: async function(requisicao, resposta) {
-        const idMembro = requisicao.params.id 
         const dados = requisicao.body
-        const horarioExiste = await horariosRepositorio.buscarUmPor('id_membro', idMembro)
+        dia = dados.dia
+        horarioEntrada = dados.entrada
+        const somenteDigitosEntrada = /^\d+$/.test(horarioEntrada)
         
-        if(!horarioExiste){
-            return resposta.status(404).json({erro: 'Membro Não Encontrado'})
+        if(!somenteDigitosEntrada){
+            return resposta.status(400).json({erro: 'Horário de Entrada Inválido'})
+        }
+        
+        idHorario = await horariosRepositorio.buscarIdHorario(dia, horarioEntrada) 
+
+        if(idHorario == 0){
+            return resposta.status(404).json({erro: 'Horário Não existente'})
         }
 
-        await horariosRepositorio.remover(idMembro)
-        return resposta.status(200).json({Resultado :'Horário Deletado com Sucesso'})
+        await horariosRepositorio.remover(idHorario)
+        return resposta.status(200).json({Resultado :'Membros do Horário Deletados com Sucesso'})
     }
 }
 

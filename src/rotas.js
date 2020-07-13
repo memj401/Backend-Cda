@@ -59,9 +59,8 @@ roteador.get('/relatorios/permanencia', eletronicaControladora.listarPermanencia
 
 //Funcionalidades relacionadas aos horários de permanência
 roteador.get('/horarios', horariosControladora.listarTodos)
-roteador.get('/horarios/listar/:parametro', horariosControladora.listar)
 roteador.post('/horarios', horariosControladora.inserir)
-roteador.put('/horarios/:id', horariosControladora.editar)
-roteador.delete('/horarios/:id', horariosControladora.remover)
+roteador.put('/horarios/:id_membro', horariosControladora.editar)
+roteador.delete('/horarios', horariosControladora.remover)
 
 module.exports = roteador
