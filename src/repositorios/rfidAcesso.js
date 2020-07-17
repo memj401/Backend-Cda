@@ -1,6 +1,6 @@
 const bancoDeDados = require('../bancoDeDados/index')
 const ejs = require('ejs');
-
+const puppeteer = require('puppeteer-core');
 /**
     * Repositório de funções do banco de dados do RFID de acesso a porta
     * @namespace repositorioAcesso
@@ -26,6 +26,9 @@ const rfidAcesso = {
         * @param {Boolean} dados.valido Um booleano que indica se o cartão é valido ou não 
     */
     inserir: async function(dados){
+        //const entradaMaisAntiga = await (await bancoDeDados.query(`SELECT * FROM "rfid_acesso" ORDER BY "data" CRES,"horario" DESC LIMIT 1;`)).rows[0] 
+        // if(comparacao de datas)
+        // gerar o relatorio e apagar o banco de dados await this.gerarRelatorio()
         await bancoDeDados.query(`INSERT INTO "rfid_acesso" ("nome","rfid","valido","data","horario") 
             VALUES ('${dados.nome}', '${dados.rfid}', ${dados.valido}, CURRENT_DATE, LOCALTIME);`)
     },
@@ -43,63 +46,23 @@ const rfidAcesso = {
             historico.rows[i].data = datasFormatadas.rows[i].to_char
         }
         return historico.rows
-    }//,
-    // gerarRelatorio: async function(){ //ou semanal sei la
-    //     const historico = await bancoDeDados.query(`SELECT * FROM "rfid_acesso" ORDER BY "data" DESC,"horario" DESC;`)
-    //     const datasFormatadas = await bancoDeDados.query(`SELECT "horario", TO_CHAR("data", 'dd/mm/yyyy') 
-    //         FROM "rfid_acesso" ORDER BY "data" DESC,"horario" DESC;`)
-    //     for (var i = 0; i < historico.rows.length; i++) {
-    //         historico.rows[i].data = datasFormatadas.rows[i].to_char
-    //     }
-    //     ejs.renderFile("../relatorios/template.ejs", {tabela:historico.rows}, (erro,html) =>{
-    //         if (erro){
-    //             console.log(erro)
-    //         }
-    //         else {
-    //             console.log(html)
-    //         }
-    //     })
-    // }
-    //     var doc = new jsPDF();
-
-    //     var tabela = document.getElementById(tabelaID);
-    //     var hoje = new Date();
-    //     var dd = hoje.getDate();
-    //     var mm = hoje.getMonth() + 1;
-    //     var yyyy = hoje.getFullYear();
-    //     if (dd < 10) dd = '0' + dd;
-    //     if (mm < 10) mm = '0' + mm;
-    //     hoje = dd + '-' + mm + '-' + yyyy
-    //     var nome = tabelaID + '-' + hoje;
-    //     //cabeçalho
-
-    //     var header = function (data) {
-    //         var img = new Image()
-    //         if (window.location.href.indexOf('relatorios') >= 0) {
-    //             img.src = ('../assets/mecajun_logo_pdf.png');
-    //         } 
-    //         else {
-    //             img.src = ('./assets/mecajun_logo_pdf.png');
-    //         }
-    //         var imgOffset = (doc.internal.pageSize.width - 50) / 2;
-    //         doc.addImage(img, 'png', imgOffset, 20, 50, 25);
-    //     }
-    //     // Título do Documento
-
-    //     doc.setFont('Times New Roman');
-    //     doc.setFontSize(18);
-    //     doc.setTextColor(24, 109, 105);
-    //     doc.setFontType("bold");
-    //     var hoje_titulo = dd + '/' + mm + '/' + yyyy
-    //     var titulo = tabela.childNodes[1].innerHTML + ' de ' + tabela.childNodes[1].id + ' até ' + hoje_titulo
-    //     var textWidth = doc.getStringUnitWidth(titulo) * doc.internal.getFontSize() / doc.internal.scaleFactor;
-    //     var textOffset = (doc.internal.pageSize.width - textWidth) / 2;
-    //     doc.text(textOffset, 52, titulo)
-    //     // Tabela
-
-    //     doc.autoTable({ didDrawPage: header, margin: { top: 57 }, html: '#' + tabela.childNodes[3].id })
-    //     doc.save(nome + '.pdf');
-    // } //Pra n ficar guardando dados desnecessários
+    },
+    gerarRelatorio: async function(){ //ou semanal sei la
+        const tabela = await this.buscarTodos()
+        ejs.renderFile("../relatorios/template.ejs", {tabela:tabela},async (erro,html) => {
+            if (erro){
+                console.log(erro)
+            }
+            else {
+                const browser = await puppeteer.launch({executablePath:'/usr/bin/chromium-browser'})
+                const page = await browser.newPage()
+                await page.setContent(html)
+                const pdf = await page.pdf({path:"./relatorioAcessoTeste.pdf"})
+                await browser.close();
+            }
+        })
+        await bancoDeDados.query(`DELETE FROM "rfid_acesso"`)
+    }
 }
 
 module.exports = rfidAcesso

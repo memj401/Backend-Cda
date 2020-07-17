@@ -20,10 +20,10 @@ async function fazerhtml(){
         }
         else {
             console.log(html)
-	    const browser = await puppeteer.launch({executablePath:'/usr/bin/chromium-browser'})
-	    const page = await browser.newPage()
-	    await page.setContent(html)
-	    const pdf = await page.pdf({path:"./pdfteste.pdf"})
+            const browser = await puppeteer.launch({executablePath:'/usr/bin/chromium-browser'})
+            const page = await browser.newPage()
+            await page.setContent(html)
+            const pdf = await page.pdf({path:"./pdfteste.pdf"})
         }
     })
 }
