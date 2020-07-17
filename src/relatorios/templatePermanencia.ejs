@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style type="text/css">
+        .pagepdf{
+            width: 21cm;
+            height: 29.7cm;
+            background-color: rgb(211, 207, 207);
+        }
+        .cabecalhopdf{
+            height: 5cm;
+            margin: 0 auto;
+            background: url('./mecajun_logo.png') center center/5cm no-repeat;
+        }
+        .titulopdf{
+            margin: 0 auto;
+            margin-top: -40px;
+            font-size: 35px;
+            color: #1a8e88;
+            text-align: center;
+        }
+        .subtitulopdf{
+            margin: 0 auto;
+            font-size: 20px;
+            color: black;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .tabelapdf{
+            width: calc(100% - 5cm);
+            margin-left: 3cm;
+            margin-bottom: 2cm;
+            margin-right: 2cm;
+            text-align: center;
+        }
+        
+        .tabelapdf thead {
+            text-align: center;
+            font-weight: bold;
+            font-size: 20px;
+            color: white;
+            background-color: #186d69;
+        }
+        
+        .tabelapdf tbody {
+            font-size: 15px;
+            text-align: center;
+        }
+        
+        .tabelapdf th {
+            padding: 10px;
+        }
+        
+        .tabelapdf td {
+            padding: 7px;
+        }
+        
+        tr:nth-child(odd) {
+            background-color: transparent;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #c8dddc;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <section>
+            <h1 class="titulopdf">Relatório de Permanência</h1>
+            <h2 class="subtitulopdf">Do dia XX/XX/XXXX ate o dia XX/XX/XXXX</h2>
+            <table class="tabelapdf">
+                <thead>
+                    <tr>
+                        <td>Data</td>
+                        <td>Entrada</td>
+                        <td>Saída</td>
+                        <td>Nome</td>
+                    </tr>
+                    <% tabela.forEach(linha =>{ %>
+                    <tr>
+                        <td><%=linha.data%></td>
+                        <td><%=linha.entrada%></td>
+                        <td><%=linha.saida%></td>
+                        <td><%=linha.nome%></td>
+                    </tr>
+                    <% }) %>
+                </thead>
+            </table>
+        </section>
+    </div>
+</body>
+</html>
