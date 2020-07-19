@@ -1,4 +1,5 @@
 const bancoDeDados = require('../bancoDeDados/index')
+const HorariosControladora = require('../controladoras/horariosControladora')
 
 /**
 * Repositório de funções de acesso ao banco de dados de horarios de permanência
@@ -6,18 +7,29 @@ const bancoDeDados = require('../bancoDeDados/index')
 */
 
 const HorarioDoMembro = {
-    inserir: async function (idMembro, idHorario) {
-		await bancoDeDados.query(`INSERT INTO "relacao_membros_horarios"("id_membro","id_horario")
-            VALUES(${idMembro}, ${idHorario});`)
+    inserir: async function (horarios) {
+
+        for(let diaChave in horarios){
+            const dia = horarios[diaChave]
+
+            for(let horaChave in dia){
+                const hora = dia[horaChave]
+
+                for(let membro of hora.membros){
+                    idMembro = membro.idMembro
+                    idHorario = await HorarioDoMembro.buscarIdHorario(diaChave,horaChave)
+
+                    await bancoDeDados.query(`INSERT INTO "relacao_membros_horarios"("id_membro","id_horario")
+                    VALUES(${idMembro}, ${idHorario});`)
+                }
+            }
+        }
+
     	return true
     },
 
-    remover: async function (idHorario) {
-        await bancoDeDados.query(`DELETE from "relacao_membros_horarios" WHERE "id_horario" = ${idHorario};`)
-    },
-
-    buscarIdHorario: async function (Dia,HorarioEntrada){
-        id = await bancoDeDados.query(`SELECT  * FROM "horarios" WHERE "dia" = '${Dia}' AND "entrada" = '${HorarioEntrada}';`)
+    buscarIdHorario: async function (dia,horarioEntrada){
+        id = await bancoDeDados.query(`SELECT  * FROM "horarios" WHERE "dia" = '${dia}' AND "entrada" = '${horarioEntrada}';`)
         if (id.rows.length !== 0) {
             return id.rows[0].id_horario
         }
@@ -26,12 +38,15 @@ const HorarioDoMembro = {
 
     buscarMembro: async function (idHorario){
         id = await bancoDeDados.query(`SELECT "id_membro" FROM "relacao_membros_horarios" WHERE "id_horario" = ${idHorario}`)
-        membro = []
+        let grupo  = []
+        let bloco = {idHorario: idHorario}
         for(i=0;i<id.rows.length;i++){
-            aux = await bancoDeDados.query(`SELECT "nome" FROM "membros" WHERE "id_membro" = ${id.rows[i].id_membro}`)
-            membro[i] = aux.rows[0].nome
+            aux = await bancoDeDados.query(`SELECT "nome","id_membro" FROM "membros" WHERE "id_membro" = ${id.rows[i].id_membro}`)
+            const membro = {nome : aux.rows[0].nome, idMembro : aux.rows[0].id_membro}
+            grupo[i] = membro
         }
-        return membro
+        bloco.membros = grupo
+        return bloco
     },
 
     checarMembro: async function(idMembro){
@@ -61,11 +76,10 @@ const HorarioDoMembro = {
         return dados
     },
 
-    editar: async function (idMembro,idHorario){
-        resultado = await bancoDeDados.query(`UPDATE "relacao_membros_horarios" SET "id_horario" = ${idHorario}  WHERE "id_membro" = ${idMembro} RETURNING *`)
-        return resultado.rows[0]
+    remover: async function (){
+        await bancoDeDados.query(`DELETE FROM "relacao_membros_horarios";`)       
+        return null
     }
-
 }
 
 module.exports = HorarioDoMembro
