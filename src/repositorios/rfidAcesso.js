@@ -26,10 +26,15 @@ const rfidAcesso = {
         * @param {Boolean} dados.valido Um booleano que indica se o cartão é valido ou não 
     */
     inserir: async function(dados){
-        //const entradaMaisAntiga = await (await bancoDeDados.query(`SELECT * FROM "rfid_acesso" ORDER BY "data" CRES,"horario" DESC LIMIT 1;`)).rows[0] 
-        // if(comparacao de datas)
-        // gerar o relatorio e apagar o banco de dados await this.gerarRelatorio()
-        await bancoDeDados.query(`INSERT INTO "rfid_acesso" ("nome","rfid","valido","data","horario") 
+        const entradaMaisAntiga = await (await bancoDeDados.query(`SELECT * FROM "rfid_acesso" ORDER BY "data" CRES,"horario" DESC LIMIT 1;`)).rows[0] 
+        console.log(entradaMaisAntiga.data + " ISSO E O CONSOLELOG DA entradaMaisAntiga.data")
+        const diasDesdeUltimoRelatorio = await bancoDeDados.query(`SELECT DATE_PART('day',CURRENT_TIMESTAMP - '${entradaMaisAntiga.data}'::timestamp)`)
+        console.log(diasDesdeUltimoRelatorio + " ISSO E O CONSOLELOG DOS diasDesdeUltimoRelatorio")
+        if (diasDesdeUltimoRelatorio > 30){
+            console.log("ENTROU DENTRO DO IF")
+            await this.gerarRelatorio()
+        }
+        await bancoDeDados.query(`INSERT INTO "rfid_acesso" ("nome","rfid","valido","data","horario")
             VALUES ('${dados.nome}', '${dados.rfid}', ${dados.valido}, CURRENT_DATE, LOCALTIME);`)
     },
     /**
@@ -48,19 +53,20 @@ const rfidAcesso = {
         return historico.rows
     },
     gerarRelatorio: async function(){ //ou semanal sei la
-        const tabela = await this.buscarTodos()
-        ejs.renderFile("../relatorios/template.ejs", {tabela:tabela},async (erro,html) => {
-            if (erro){
-                console.log(erro)
-            }
-            else {
-                const browser = await puppeteer.launch({executablePath:'/usr/bin/chromium-browser'})
-                const page = await browser.newPage()
-                await page.setContent(html)
-                const pdf = await page.pdf({path:"./relatorioAcessoTeste.pdf"})
-                await browser.close();
-            }
-        })
+        console.log("GG izi")
+        // const tabela = await this.buscarTodos()
+        // ejs.renderFile("../relatorios/template.ejs", {tabela:tabela},async (erro,html) => {
+        //     if (erro){
+        //         console.log(erro)
+        //     }
+        //     else {
+        //         const browser = await puppeteer.launch({executablePath:'/usr/bin/chromium-browser'})
+        //         const page = await browser.newPage()
+        //         await page.setContent(html)
+        //         const pdf = await page.pdf({path:"./relatorioAcessoTeste.pdf"})
+        //         await browser.close();
+        //     }
+        // })
         await bancoDeDados.query(`DELETE FROM "rfid_acesso"`)
     }
 }
