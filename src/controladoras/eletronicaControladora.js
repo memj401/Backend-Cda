@@ -1,6 +1,7 @@
 const membroRepositorio = require('../repositorios/membro')
 const acessoRepositorio = require('../repositorios/rfidAcesso')
 const permanenciaRepositorio = require('../repositorios/rfidPermanencia')
+const horarioRepositorio = require('../repositorios/horarioDoMembro')
 /**
     * Controladora de funções envolvendo RFID e a requisição HTTP
     * @namespace eletronicaControladora
@@ -32,12 +33,48 @@ const eletronicaControladora = {
         if (buscaMembro == undefined){
             return resposta.status(400).json({erro: "O cartão é inválido"})
         }
+        const horarioAtual = new Date()
+        const horarioDoMembro = await horarioRepositorio.buscarHorarioDoMembro(buscaMembro.id)
         const verificarEntrada = await permanenciaRepositorio.buscarUm(buscaMembro.nome)
         if(verificarEntrada){
-            await permanenciaRepositorio.inserirSaida(buscaMembro.nome)
+            if(horarioAtual.getHours() - horarioDoMembro.saida >= 0){
+                const valido = true
+                await permanenciaRepositorio.inserirSaida(buscaMembro.nome, valido)
+            }
+            else if(horarioAtual.getHours - horarioDoMembro == -1) {
+                if(horarioAtual.getMinutes()<50){
+                    const valido = false
+                    await permanenciaRepositorio.inserirSaida(buscaMembro.nome, valido)
+                } 
+                else{
+                    const valido = true
+                    await permanenciaRepositorio.inserirSaida(buscaMembro.nome, valido)
+                }
+            }
+            else{
+                const valido = false
+                await permanenciaRepositorio.inserirSaida(buscaMembro.nome,valido)
+            }
         }
         else{
-            await permanenciaRepositorio.inserirEntrada(buscaMembro.nome)
+            if(horarioAtual.getHours() - horarioDoMembro.entrada>0){
+                const valido = false
+                await permanenciaRepositorio.inserirEntrada(buscaMembro.nome, valido)
+            }
+            else if(horarioAtual.getHours() - horarioDoMembro.entrada==0){
+                if(horarioAtual.getMinutes()>10){
+                    const valido = false
+                    await permanenciaRepositorio.inserirEntrada(buscaMembro.nome, valido)
+                }
+                else{
+                    const valido = true
+                    await permanenciaRepositorio.inserirEntrada(buscaMembro.nome, valido)
+                }
+            }
+            else{
+                const valido = true
+                await permanenciaRepositorio.inserirEntrada(buscaMembro.nome, valido)
+            }
         }
         return resposta.status(200).end()
     },

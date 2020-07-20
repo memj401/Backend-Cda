@@ -6,13 +6,14 @@ const bancoDeDados = require('../bancoDeDados/index')
 */
 
 const rfidPermanencia = {
-    inserirEntrada: async function(nome){
+    inserirEntrada: async function(nome, valido){
         await bancoDeDados.query(`INSERT INTO "rfid_permanencia" ("nome","data","entrada","valido") 
             VALUES ('${nome}', CURRENT_DATE, LOCALTIME, ${valido});`)
     },
 
-    inserirSaida: async function(nome){
-        await bancoDeDados.query(`UPDATE "rfid_permanencia" SET "saida"  = LOCALTIME WHERE "nome" = '${nome}' AND "data" = CURRENT_DATE;`)
+    inserirSaida: async function(nome, valido){
+        await bancoDeDados.query(`UPDATE "rfid_permanencia" SET "valido" = ${valido} WHERE "nome" = '${nome}' AND "data" = CURRENT_DATE;`)
+        await bancoDeDados.query(`UPDATE "rfid_permanencia" SET "saida" = LOCALTIME WHERE "nome" = '${nome}' AND "data" = CURRENT_DATE;`)
     },
 
     buscarUm: async function(nome){
