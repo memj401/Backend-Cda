@@ -79,6 +79,13 @@ const HorarioDoMembro = {
     remover: async function (){
         await bancoDeDados.query(`DELETE FROM "relacao_membros_horarios";`)       
         return null
+    },
+
+    buscarHorarioDoMembro: async function (idMembro) {
+        const idHorario = await bancoDeDados.query(`SELECT "id_horario" FROM "relacao_membros_horarios" WHERE "id_membro" = ${idMembro}';`)
+        const horario = await bancoDeDados.query(`SELECT  * FROM "horarios" WHERE "id_horario" = ${idHorario.rows[0].id_horario}';`)
+
+        return horario.rows[0]
     }
 }
 
