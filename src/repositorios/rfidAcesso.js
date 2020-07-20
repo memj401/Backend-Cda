@@ -28,7 +28,7 @@ const rfidAcesso = {
     inserir: async function(dados){
         const entradaMaisAntiga = await (await bancoDeDados.query(`SELECT * FROM "rfid_acesso" ORDER BY "data" CRES,"horario" DESC LIMIT 1;`)).rows[0] 
         console.log(entradaMaisAntiga.data + " ISSO E O CONSOLELOG DA entradaMaisAntiga.data")
-        const diasDesdeUltimoRelatorio = await bancoDeDados.query(`SELECT DATE_PART('day',CURRENT_TIMESTAMP - '${entradaMaisAntiga.data}'::timestamp)`)
+        const diasDesdeUltimoRelatorio = await bancoDeDados.query(`SELECT DATE_PART('day',CURRENT_TIMESTAMP - '${entradaMaisAntiga.data}'::timestamp);`)
         console.log(diasDesdeUltimoRelatorio + " ISSO E O CONSOLELOG DOS diasDesdeUltimoRelatorio")
         if (diasDesdeUltimoRelatorio > 30){
             console.log("ENTROU DENTRO DO IF")

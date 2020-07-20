@@ -24,8 +24,7 @@ const HorarioDoMembro = {
                 }
             }
         }
-
-    	return true
+        return true
     },
 
     buscarIdHorario: async function (dia,horarioEntrada){
@@ -52,7 +51,7 @@ const HorarioDoMembro = {
     checarMembro: async function(idMembro){
         id = await bancoDeDados.query(`SELECT "id_membro" FROM "relacao_membros_horarios" WHERE "id_membro" = ${idMembro};`)
         if (id.rows.length !== 0) {
-           return id.rows[0].id_membro 
+            return id.rows[0].id_membro 
         }
         return false
     },
