@@ -85,9 +85,23 @@ const ConhecimentoRepositorio = {
   * @parameter {Integer} id- identificador numérico do conhecimento
   * @returns {Object} Retorna as informações atualizadas do conhecimento 
   */
-	editar: async function (nome, id) {
-		const resultado = await bancoDeDados.query(`UPDATE "conhecimentos" SET "nome" =' ${nome}' WHERE "id_conhecimento" = ${id} RETURNING *;`)
-		return resultado.rows[0]
+	editar: async function (dados, id) {
+		const parametros = ['nome','descricao']
+    let queryFinal = 'UPDATE "conhecimentos" SET '
+    
+    let parametroAnteriorFoiAtualizado = false
+    for (i = 0; i < parametros.length; ++i) {
+      if (dados[parametros[i]]) {
+        if (parametroAnteriorFoiAtualizado) {
+          queryFinal += ', '
+        }
+        queryFinal += `"${parametros[i]}" = '${dados[parametros[i]]}'`
+        parametroAnteriorFoiAtualizado = true
+      }
+    }
+    queryFinal += ` WHERE "id_conhecimento" = ${id} RETURNING *;`
+    resultado = await bancoDeDados.query(queryFinal)
+    return resultado.rows[0]
 	}
 }
 

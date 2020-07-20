@@ -40,11 +40,11 @@ const conhecimentoControladora = {
 
 	editar: async function (requisicao, resposta) {
 		idConhecimento = requisicao.params.id
-		const nome = requisicao.body.nome
+		const dados = requisicao.body
 		
 		const conhecimentoExiste = await conhecimentoRepositorio.buscar(idConhecimento)
 		
-		if (!nome) {
+		if (!dados.nome && !dados.descricao) {
 			return resposta.status(400).json({erro: 'Requisição Vazia'})
 		}
 
@@ -52,13 +52,13 @@ const conhecimentoControladora = {
 			return resposta.status(404).json({erro: 'Conhecimento não encontrado'})
 		}
 
-		const conhecimentoJaExiste = await conhecimentoRepositorio.buscarPorNome(nome)
+		const conhecimentoJaExiste = await conhecimentoRepositorio.buscarPorNome(dados.nome)
 
 		if (conhecimentoJaExiste) {
 			return resposta.status(400).json({erro : 'Nome de Conhecimento Já Cadastrado'})
 		}
 
-		const conhecimentoAtualizado = await conhecimentoRepositorio.editar(nome,idConhecimento)
+		const conhecimentoAtualizado = await conhecimentoRepositorio.editar(dados,idConhecimento)
 		return resposta.status(200).json(conhecimentoAtualizado)
 	},
 
