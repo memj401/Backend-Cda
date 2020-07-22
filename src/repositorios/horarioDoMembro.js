@@ -1,5 +1,4 @@
 const bancoDeDados = require('../bancoDeDados/index')
-const HorariosControladora = require('../controladoras/horariosControladora')
 
 /**
 * Repositório de funções de acesso ao banco de dados de horarios de permanência
@@ -24,6 +23,7 @@ const HorarioDoMembro = {
                 }
             }
         }
+
         return true
     },
 
@@ -51,7 +51,7 @@ const HorarioDoMembro = {
     checarMembro: async function(idMembro){
         id = await bancoDeDados.query(`SELECT "id_membro" FROM "relacao_membros_horarios" WHERE "id_membro" = ${idMembro};`)
         if (id.rows.length !== 0) {
-            return id.rows[0].id_membro 
+           return id.rows[0].id_membro 
         }
         return false
     },
@@ -79,7 +79,7 @@ const HorarioDoMembro = {
         await bancoDeDados.query(`DELETE FROM "relacao_membros_horarios";`)       
         return null
     },
-
+    
     buscarHorarioDoMembro: async function (idMembro) {
         const idHorario = await bancoDeDados.query(`SELECT "id_horario" FROM "relacao_membros_horarios" WHERE "id_membro" = ${idMembro}';`)
         const horario = await bancoDeDados.query(`SELECT  * FROM "horarios" WHERE "id_horario" = ${idHorario.rows[0].id_horario}';`)

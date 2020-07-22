@@ -9,6 +9,6 @@ VALUES
 ('David', 'Gerente de Inovacao', '000000004', '00004'),
 ('Maria', 'Diretora de Negocios', '000000006', '00006'),
 ('Emanuel', 'Consultor de Operacoes', '000000007', '00007'),
-('Luquinhas', 'Consultor de Marketing', '000000008', '00008'),
-('Sabryna', 'PresInt', '000000009', '00009'), 
+('Lucas', 'Consultor de Marketing', '000000008', '00008'),
+('Sabrina', 'PresInt', '000000009', '00009'), 
 ('Alexandre', 'Diretor de Operacoes', '000000005', '00005');

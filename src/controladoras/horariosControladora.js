@@ -87,31 +87,23 @@ const HorariosControladora = {
         const cronograma = requisicao.body
         horarioEntrada = cronograma.entrada
         dia = cronograma.dia
-
         const somenteDigitosEntrada = /^\d+$/.test(horarioEntrada)
         
         if (!horarioEntrada || !dia) {
             return resposta.status(400).json({erro: 'Requisição Incompleta'})
         }
-
         const membroExiste = await membroRepositorio.buscarUm(idMembro)
-
         if(!membroExiste){
             return resposta.status(404).json({erro: 'Membro Não Existente na Tabela de Membros'})
         }
-
         testeMembro = await horariosRepositorio.checarMembro(idMembro)
-
         if(!testeMembro){
             return resposta.status(404).json({erro: 'Membro Não Registrado Nos Horários'})
         }
-
         if(!somenteDigitosEntrada){
             return resposta.status(400).json({erro: 'Horário de Entrada Inválido'})
         } 
-
         idHorario = await horariosRepositorio.buscarIdHorario(dia, horarioEntrada)
-
         if(!idHorario){
             return resposta.status(404).json({erro: 'Horário Não Existente'})
         }
