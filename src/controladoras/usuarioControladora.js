@@ -18,7 +18,7 @@ const usuarioControladora = {
 	listarTodos: async function(requisicao, resposta) {
     	const usuarios = await usuarioRepositorio.buscarTodos()
     	if (!usuarios) {
-       	return resposta.status(404).json({erro: 'Não Há Membros no Banco de Dados'})
+       	return resposta.status(404).json({erro: 'Não Há Usuários no Banco de Dados'})
     	} 
       	return resposta.status(200).json(usuarios)
   	},
@@ -31,7 +31,7 @@ const usuarioControladora = {
         * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
     */
-	inserir: async function (requisicao, resposta) {
+	inserir: async function (requisicao, resposta, proximo) {
 		const dados = requisicao.body
 		const somenteDigitosPermissao = /^\d+$/.test(dados.permissao)
 		
@@ -58,6 +58,8 @@ const usuarioControladora = {
 		await usuarioRepositorio.inserir(dados)
 		usuarioCriado = await usuarioRepositorio.buscar(dados.nome)
 		delete usuarioCriado.senha
+		requisicao.nome = usuarioCriado.nome
+		proximo()
 		return resposta.status(201).json(usuarioCriado)
 	},
     /**
@@ -68,7 +70,7 @@ const usuarioControladora = {
         * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
     */
-	remover: async function (requisicao, resposta) {
+	remover: async function (requisicao, resposta, proximo) {
 		const nomeDeUsuario = requisicao.params.usuario
 		const usuarioExiste = await usuarioRepositorio.buscar(nomeDeUsuario)
  		
@@ -77,6 +79,8 @@ const usuarioControladora = {
 		}
 		
 		await usuarioRepositorio.remover(nomeDeUsuario)
+		requisicao.nome = usuarioExiste.nome
+		proximo()
 		return resposta.status(200).json({resultado :'Membro Deletado com Sucesso'})
 	},
     /**
@@ -87,7 +91,7 @@ const usuarioControladora = {
         * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
     */
-	editar: async function (requisicao, resposta) {
+	editar: async function (requisicao, resposta, proximo) {
 		const nomeDeUsuario = requisicao.params.usuario
 		const dados = requisicao.body
 		const usuarioExiste = await usuarioRepositorio.buscar(nomeDeUsuario)
@@ -122,6 +126,8 @@ const usuarioControladora = {
 		await usuarioRepositorio.editar(dados, nomeDeUsuario)
 		
 		if (dados.nome) {
+			requisicao.nome = usuarioExiste.nome
+			proximo()			
 			resultado = await usuarioRepositorio.buscar(dados.nome)
 			delete resultado.senha
 			return resposta.status(200).json(resultado)
@@ -129,6 +135,8 @@ const usuarioControladora = {
 		
 		resultado = await usuarioRepositorio.buscar(nomeDeUsuario)
 		delete resultado.senha
+		requisicao.nome = usuarioExiste.nome
+		proximo()
 		return resposta.status(200).json(resultado)
 	},
     /**
@@ -139,7 +147,7 @@ const usuarioControladora = {
         * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
     */
-	mudarSenha: async function (requisicao, resposta) {
+	mudarSenha: async function (requisicao, resposta, proximo) {
 		const nomeDeUsuario = requisicao.params.usuario
 		const senha = requisicao.body.senha
 		const usuarioExiste = await usuarioRepositorio.buscar(nomeDeUsuario)
@@ -151,6 +159,8 @@ const usuarioControladora = {
 		const sal = await bcrypt.genSalt() 
 		const hash = await bcrypt.hash(senha, sal)
 		await usuarioRepositorio.mudarSenha(hash,nomeDeUsuario)
+		requisicao.nome = usuarioExiste.nome
+		proximo()
 		return  resposta.status(200).json({resultado: 'Senha Alterada com Sucesso'})
 	}
 }

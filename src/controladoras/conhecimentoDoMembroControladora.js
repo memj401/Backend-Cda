@@ -4,7 +4,7 @@ const conhecimentoDoMembroRepositorio = require('../repositorios/conhecimentoDoM
 
 
 conhecimentoDoMembroControladora = {
-	inserir: async function (requisicao, resposta) {
+	inserir: async function (requisicao, resposta, proximo) {
 		const idMembro = requisicao.params.id_membro
 		const idConhecimento = requisicao.params.id_conhecimento
 		const nivel = requisicao.body.nivel
@@ -38,11 +38,12 @@ conhecimentoDoMembroControladora = {
 			nivel: nivel,
 			membro: membroExiste.nome
 		}
-
+		requisicao.nome = membroExiste.nome
+		proximo()
 		return resposta.status(201).json(info)
 	},
 
-	remover: async function (requisicao, resposta) {
+	remover: async function (requisicao, resposta, proximo) {
 		const idMembro = requisicao.params.id_membro
 		const idConhecimento = requisicao.params.id_conhecimento
 
@@ -53,10 +54,13 @@ conhecimentoDoMembroControladora = {
 		}
 
 		await conhecimentoDoMembroRepositorio.remover(idMembro, idConhecimento)
+		membro = await membroRepositorio.buscarUm(idMembro)
+		requisicao.nome = membro.nome 
+		proximo()
 		return resposta.status(200).json({Resultado :'Conhecimento do Membro Deletado com Sucesso'}) 
 	},
 
-	editar: async function (requisicao, resposta) {
+	editar: async function (requisicao, resposta, proximo) {
 		const idMembro = requisicao.params.id_membro
 		const idConhecimento = requisicao.params.id_conhecimento
 		const nivel = requisicao.body.nivel
@@ -80,8 +84,9 @@ conhecimentoDoMembroControladora = {
 			conhecimento: conhecimento.nome,
 			nivel: novoNivel,
 			membro: membro.nome
-		} 
-
+		}
+		requisicao.nome = membro.nome 
+		proximo()
 		return resposta.status(200).json(info)
 	}
 }

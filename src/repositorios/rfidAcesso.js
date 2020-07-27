@@ -45,9 +45,9 @@ const rfidAcesso = {
         const historico = await bancoDeDados.query(`SELECT * FROM "rfid_acesso" ORDER BY "data" DESC,"horario" DESC;`)
         const datasFormatadas = await bancoDeDados.query(`SELECT "horario", TO_CHAR("data", 'dd/mm/yyyy') 
             FROM "rfid_acesso" ORDER BY "data" DESC,"horario" DESC;`)
-        for (var i = 0; i < historico.rows.length; i++) {
-            historico.rows[i].data = datasFormatadas.rows[i].to_char
-        }
+        historico.rows.forEach( function(elemento, indice) {
+            elemento.data = datasFormatadas.rows[indice].to_char
+        });
         return historico.rows
     },
     gerarRelatorio: async function(){

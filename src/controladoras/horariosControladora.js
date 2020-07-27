@@ -19,7 +19,7 @@ const HorariosControladora = {
         return resposta.status(200).json(horarios)
     },
 
-    inserir: async function(requisicao, resposta){
+    inserir: async function(requisicao, resposta, proximo){
         const cronograma = requisicao.body
 
         function somenteDigitosEntrada(vetor){
@@ -79,6 +79,7 @@ const HorariosControladora = {
             }
         }
         await horariosRepositorio.inserir(cronograma)
+        proximo()
         return resposta.status(201).json({Resultado :'Membros Inseridos Com Sucesso'})
     },
 
@@ -113,8 +114,9 @@ const HorariosControladora = {
     },
 */
 
-    remover: async function(requisicao, resposta) {
+    remover: async function(requisicao, resposta, proximo) {
         await horariosRepositorio.remover()
+        proximo()
         return resposta.status(200).json({Resultado :'Horários Dos Membros Deletados com Sucesso'})
     }
 }

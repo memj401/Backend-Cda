@@ -78,7 +78,7 @@ const MembroControladora = {
         * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
     */
-  inserir: async function (requisicao, resposta) {
+  inserir: async function (requisicao, resposta, proximo) {
     const dados = requisicao.body
     const somenteDigitosMatricula = /^\d+$/.test(dados.matricula) //Expressão Regular Checa se o campo da matrícula tem somente dígitos
     const somenteDigitosRfid = /^\d+$/.test(dados.rfid)          // Expressão Regular Checa se o campo do rfid tem somente dígitos
@@ -109,6 +109,8 @@ const MembroControladora = {
 
     await membroRepositorio.inserir(dados)
     const membroInserido = await membroRepositorio.buscarUmPor('matricula', dados.matricula)
+    requisicao.nome = dados.nome
+    proximo()
     return resposta.status(201).json(membroInserido)
   },
       /**
@@ -120,7 +122,7 @@ const MembroControladora = {
         * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
     */
-  editar: async function(requisicao, resposta) {
+  editar: async function(requisicao, resposta, proximo) {
     const idMembro = requisicao.params.id 
     const dados = requisicao.body
     const somenteDigitosMatricula = /^\d+$/.test(dados.matricula) 
@@ -163,6 +165,8 @@ const MembroControladora = {
     }
 
     const membroAtualizado = await membroRepositorio.editar(dados, idMembro)
+    requisicao.nome = membroExistente.nome
+    proximo()
     return resposta.status(200).json(membroAtualizado)
   },
     /**
@@ -173,7 +177,7 @@ const MembroControladora = {
         * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
     */
-  remover: async function (requisicao, resposta) {
+  remover: async function (requisicao, resposta, proximo) {
     const idMembro = requisicao.params.id
     const membroExiste = await membroRepositorio.buscarUm(idMembro)
    
@@ -182,6 +186,8 @@ const MembroControladora = {
     }
 
     await membroRepositorio.remover(idMembro)
+    requisicao.nome = membroExiste.nome
+    proximo()
     return resposta.status(200).json({Resultado :'Membro Deletado com Sucesso'})
   }
 }

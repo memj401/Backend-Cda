@@ -28,6 +28,7 @@ async function middlewareAutenticacao (requisicao, resposta, proximo) {
 	try {
 		const tokenVerificado = njwt.verify(token, chave)
 		requisicao.permissao = tokenVerificado.body.permissao
+		requisicao.usuario = tokenVerificado.body.usuario
 		return proximo()
 	} catch(erro) {
 		if (erro.message === 'Jwt is expired') {

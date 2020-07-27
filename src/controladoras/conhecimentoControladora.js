@@ -20,7 +20,7 @@ const conhecimentoControladora = {
     	return resposta.status(200).json(conhecimento)
 	},
 
-	inserir: async function (requisicao, resposta) {
+	inserir: async function (requisicao, resposta, proximo) {
 		const conhecimento = requisicao.body.conhecimento
 		const descricao = requisicao.body.descricao
 		if (!conhecimento) {
@@ -35,10 +35,12 @@ const conhecimentoControladora = {
 
 		await conhecimentoRepositorio.inserir(conhecimento, descricao)
 		const conhecimentoInserido = await conhecimentoRepositorio.buscarPorNome(conhecimento)
+		requisicao.nome = conhecimentoInserido.nome
+		proximo()
 		return resposta.status(201).json(conhecimentoInserido)
 	},
 
-	editar: async function (requisicao, resposta) {
+	editar: async function (requisicao, resposta, proximo) {
 		idConhecimento = requisicao.params.id
 		const dados = requisicao.body
 		
@@ -59,10 +61,12 @@ const conhecimentoControladora = {
 		}
 
 		const conhecimentoAtualizado = await conhecimentoRepositorio.editar(dados,idConhecimento)
+		requisicao.nome = conhecimentoExiste.nome
+		proximo()
 		return resposta.status(200).json(conhecimentoAtualizado)
 	},
 
-	remover: async function (requisicao, resposta) {
+	remover: async function (requisicao, resposta, proximo) {
 		const idConhecimento = requisicao.params.id
 		const conhecimentoExiste = await conhecimentoRepositorio.buscar(idConhecimento)
 		
@@ -71,6 +75,8 @@ const conhecimentoControladora = {
 		}
 
 		await conhecimentoRepositorio.remover(idConhecimento)
+		requisicao.nome = conhecimentoExiste.nome
+		proximo()
 		return resposta.status(200).json({Resultado :'Conhecimento Deletado com Sucesso'})
 	} 
 }
