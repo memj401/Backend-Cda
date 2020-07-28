@@ -52,6 +52,8 @@ const rfidAcesso = {
     },
     gerarRelatorio: async function(){
         const tabela = await this.buscarTodos()
+        const entradaMaisRecente = tabela[0]
+        const entradaMaisAntiga = tabela[tabela.length-1]
         ejs.renderFile("../relatorios/template.ejs", {tabela:tabela},async (erro,html) => {
             if (erro){
                 console.log(erro)
@@ -60,7 +62,7 @@ const rfidAcesso = {
                 const browser = await puppeteer.launch({executablePath:'/usr/bin/chromium-browser'})
                 const page = await browser.newPage()
                 await page.setContent(html)
-                const pdf = await page.pdf({path:"./relatorioAcessoTeste.pdf"})
+                const pdf = await page.pdf({path:`../relatorios/Acessos/AcessosDe${entradaMaisAntiga.data}Ate${entradaMaisRecente.data}.pdf`})
                 await browser.close();
             }
         })
