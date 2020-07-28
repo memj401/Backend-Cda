@@ -70,7 +70,7 @@ const rfidAcesso = {
         await bancoDeDados.query(`DELETE FROM "rfid_acesso"`)
     },
     listarRelatorios: async function(){
-        const arquivos = await glob.sync("*.pdf", {cwd:"../relatorios/Acessos"})
+        const arquivos = await glob.sync("*.pdf", {cwd:"./src/relatorios/Acessos"})
         const relatorios = await arquivos.map((arquivo)=>{
             return {arquivo:arquivo, link:`../../cda-interno-backend/src/relatorios/Acessos/${arquivo}`}
         })
