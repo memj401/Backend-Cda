@@ -1,6 +1,7 @@
 const bancoDeDados = require('../bancoDeDados/index')
 const ejs = require('ejs');
 const puppeteer = require('puppeteer-core');
+const glob = require('glob');
 /**
     * Repositório de funções do banco de dados do RFID de acesso a porta
     * @namespace repositorioAcesso
@@ -67,7 +68,15 @@ const rfidAcesso = {
             }
         })
         await bancoDeDados.query(`DELETE FROM "rfid_acesso"`)
+    },
+    listarRelatorios: async function(){
+        const arquivos = await glob.sync("*.pdf", {cwd:"../relatorios/Acessos"})
+        const relatorios = await arquivos.map((arquivo)=>{
+            return {arquivo:arquivo, link:`../../cda-interno-backend/src/relatorios/Acessos/${arquivo}`}
+        })
+        return relatorios
     }
+
 }
 
 module.exports = rfidAcesso

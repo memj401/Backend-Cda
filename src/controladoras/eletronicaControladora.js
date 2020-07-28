@@ -99,6 +99,7 @@ const eletronicaControladora = {
         const dados = await permanenciaRepositorio.buscarTodos()
         return resposta.status(200).json(dados)
     },
+    //listarPermanenciasAntigas
     /**
         * Lida com requisição GET respondendo com um vetor com todas as entradas ordenadas de mais recente pra menos recente
         * @memberof eletronicaControladora
@@ -109,6 +110,10 @@ const eletronicaControladora = {
     */
     listarAcessos: async function (requisicao, resposta){
         const dados = await acessoRepositorio.buscarTodos()
+        return resposta.status(200).json(dados)
+    },
+    listarAcessosAntigos: async function (requisicao, resposta){
+        const dados = await acessoRepositorio.listarRelatorios()
         return resposta.status(200).json(dados)
     }
 }

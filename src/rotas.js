@@ -56,6 +56,7 @@ roteador.delete('/membros/:id_membro/conhecimentos/:id_conhecimento', conhecimen
 roteador.get('/cadastro', eletronicaControladora.buscarParaCadastro)
 roteador.post('/rfid/acesso', eletronicaControladora.receberAcesso)
 roteador.get('/relatorios/acessos', eletronicaControladora.listarAcessos)
+roteador.get('/relatorios/antigos/acessos', eletronicaControladora.listarAcessosAntigos)
 roteador.post('/rfid/permanencia',eletronicaControladora.receberPermanencia)
 roteador.get('/relatorios/permanencia', eletronicaControladora.listarPermanencias)
 
