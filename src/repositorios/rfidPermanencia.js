@@ -35,10 +35,11 @@ const rfidPermanencia = {
         }
         return historico.rows
     },
-    
-    gerarRelatorio: async function(){ //ou semanal sei la
+    gerarRelatorio: async function(){
         const tabela = await this.buscarTodos()
-        ejs.renderFile("../relatorios/template.ejs", {tabela:tabela},async (erro,html) => {
+        const entradaMaisRecente = tabela[0]
+        const entradaMaisAntiga = tabela[tabela.length-1]
+        ejs.renderFile("../relatorios/templatePermanencia.ejs", {tabela:tabela},async (erro,html) => {
             if (erro){
                 console.log(erro)
             }
@@ -46,11 +47,18 @@ const rfidPermanencia = {
                 const browser = await puppeteer.launch({executablePath:'/usr/bin/chromium-browser'})
                 const page = await browser.newPage()
                 await page.setContent(html)
-                const pdf = await page.pdf({path:"./relatorioPermanenciaTeste.pdf"})
+                const pdf = await page.pdf({path:`../relatorios/Permanencia/PermanenciasDe${entradaMaisAntiga.data}Ate${entradaMaisRecente.data}.pdf`})
                 await browser.close();
             }
         })
-        //olhar o repositorio de acessos
+        await bancoDeDados.query(`DELETE FROM "rfid_permanencia"`)
+    },
+    listarRelatorios: async function(){
+        const arquivos = await glob.sync("*.pdf", {cwd:"../relatorios/Permanencia"})
+        const relatorios = await arquivos.map((arquivo)=>{
+            return {arquivo:arquivo, link:`../../cda-interno-backend/src/relatorios/Permanencia/${arquivo}`}
+        })
+        return relatorios
     }
 }
 

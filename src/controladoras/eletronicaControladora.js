@@ -95,11 +95,14 @@ const eletronicaControladora = {
             return resposta.status(200).json(dados.rfid) // [0] é a coluna q vai ficar o RFID
         }
     },
-    listarPermanencias: async function (requisição,resposta){
+    listarPermanencias: async function (requisicao, resposta){
         const dados = await permanenciaRepositorio.buscarTodos()
         return resposta.status(200).json(dados)
     },
-    //listarPermanenciasAntigas
+    listarPermanenciasAntigas: async function (requisicao, resposta){
+        const dados = await permanenciaRepositorio.listarRelatorios()
+        return resposta.status(200).json(dados)
+    },
     /**
         * Lida com requisição GET respondendo com um vetor com todas as entradas ordenadas de mais recente pra menos recente
         * @memberof eletronicaControladora

@@ -59,6 +59,7 @@ roteador.get('/relatorios/acessos', eletronicaControladora.listarAcessos)
 roteador.get('/relatorios/antigos/acessos', eletronicaControladora.listarAcessosAntigos)
 roteador.post('/rfid/permanencia',eletronicaControladora.receberPermanencia)
 roteador.get('/relatorios/permanencia', eletronicaControladora.listarPermanencias)
+roteador.get('/relatorios/antigos/permanencia', eletronicaControladora.listarPermanenciasAntigas)
 
 //Funcionalidades relacionadas aos horários de permanência
 roteador.get('/horarios', horariosControladora.listarTodos)

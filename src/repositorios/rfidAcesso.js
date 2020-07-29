@@ -55,7 +55,7 @@ const rfidAcesso = {
         const tabela = await this.buscarTodos()
         const entradaMaisRecente = tabela[0]
         const entradaMaisAntiga = tabela[tabela.length-1]
-        ejs.renderFile("../relatorios/template.ejs", {tabela:tabela},async (erro,html) => {
+        ejs.renderFile("../relatorios/templateAcesso.ejs", {tabela:tabela},async (erro,html) => {
             if (erro){
                 console.log(erro)
             }
@@ -76,7 +76,6 @@ const rfidAcesso = {
         })
         return relatorios
     }
-
 }
 
 module.exports = rfidAcesso

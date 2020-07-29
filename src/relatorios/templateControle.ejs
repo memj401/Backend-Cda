@@ -70,20 +70,22 @@
 <body>
     <div>
         <section>
-            <h1 class="titulopdf">Relatório de Acessos</h1>
+            <h1 class="titulopdf">Relatório do Painel de Controle</h1>
             <h2 class="subtitulopdf">Do dia <%=tabela[0].data> ate o dia <%=tabela[tabela.lenght-1].data></h2>
             <table class="tabelapdf">
                 <thead>
                     <tr>
                         <td>Data</td>
                         <td>Horário</td>
-                        <td>Nome</td>
+                        <td>Usuário</td>
+                        <td>Alteração</td>
                     </tr>
                     <% tabela.forEach(linha =>{ %>
                     <tr>
                         <td><%=linha.data%></td>
                         <td><%=linha.horario%></td>
-                        <td><%=linha.nome%></td>
+                        <td><%=linha.usuario%></td>
+                        <td><%=linha.alteracao%></td>
                     </tr>
                     <% }) %>
                 </thead>
