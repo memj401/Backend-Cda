@@ -118,6 +118,10 @@ const eletronicaControladora = {
     listarAcessosAntigos: async function (requisicao, resposta){
         const dados = await acessoRepositorio.listarRelatorios()
         return resposta.status(200).json(dados)
+    },
+    buscarPdfAcesso: async function (requisicao, resposta){
+        const arquivo = requisicao.params.arquivo
+        return resposta.status(200).sendFile(`./src/relatorios/Acessos/${arquivo}`)
     }
 }
 

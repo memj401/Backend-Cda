@@ -72,7 +72,7 @@ const rfidAcesso = {
     listarRelatorios: async function(){
         const arquivos = await glob.sync("*.pdf", {cwd:"./src/relatorios/Acessos"})
         const relatorios = await arquivos.map((arquivo)=>{
-            return {arquivo:arquivo, link:`../../cda-interno-backend/src/relatorios/Acessos/${arquivo}`}
+            return {arquivo:arquivo, rota:`/relatorios/antigos/acessos/${arquivo}`}
         })
         return relatorios
     }
