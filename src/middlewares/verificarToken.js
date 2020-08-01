@@ -10,10 +10,14 @@ async function verificarTokenFront (requisicao, resposta) {
 	}
 		try {
 		const tokenVerificado = njwt.verify(token, chave)
-		const permissao = tokenVerificado.body.permissao
-		return resposta.status(200).json({permissao: permissao})
+		let resultado = {permissao : tokenVerificado.body.permissao}
+		if (resultado.permissao === 5) {
+			resultado.id = tokenVerificado.body.id
+		}
+		return resposta.status(200).json(resultado)
 		} catch(erro) {
-			return resposta.status(200).json({permissao: 0})
+			let resultado = {permissao : 0}
+			return resposta.status(200).json(resultado)
 		}
 
 }
