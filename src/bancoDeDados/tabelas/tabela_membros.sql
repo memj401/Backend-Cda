@@ -5,5 +5,6 @@ CREATE TABLE "membros"(
   "cargo" VARCHAR (50) NOT NULL,
   "matricula" CHAR (9) UNIQUE NOT NULL,
   "rfid" CHAR (5) UNIQUE NOT NULL,
-  "id_membro" SERIAL PRIMARY KEY
+  "id_membro" SERIAL PRIMARY KEY,
+  "senha" VARCHAR NOT NULL
 );

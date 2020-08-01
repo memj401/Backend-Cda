@@ -1,4 +1,5 @@
 const membroRepositorio = require('../repositorios/membro')
+const bcrypt = require('bcrypt')
 
 /**
     * Controladora de funções envolvendo informações sobre os membros e a requisição HTTP
@@ -83,7 +84,6 @@ const MembroControladora = {
     const somenteDigitosMatricula = /^\d+$/.test(dados.matricula) //Expressão Regular Checa se o campo da matrícula tem somente dígitos
     const somenteDigitosRfid = /^\d+$/.test(dados.rfid)          // Expressão Regular Checa se o campo do rfid tem somente dígitos
     
-    
     if (!dados.nome || !dados.cargo || !dados.matricula || !dados.rfid) {
       return resposta.status(400).json({erro : 'Estão Faltando Campos'})
     }
@@ -107,10 +107,15 @@ const MembroControladora = {
       return resposta.status(400).json({erro: 'RFID Já Cadastrado'})
     }
 
-    await membroRepositorio.inserir(dados)
-    const membroInserido = await membroRepositorio.buscarUmPor('matricula', dados.matricula)
+    const sal = await bcrypt.genSalt()
+		const hash = await bcrypt.hash(dados.matricula, sal)
+		dados.senha = hash
+
     requisicao.nome = dados.nome
     proximo()
+
+    await membroRepositorio.inserir(dados)
+    const membroInserido = await membroRepositorio.buscarUmPor('matricula', dados.matricula)
     return resposta.status(201).json(membroInserido)
   },
       /**
@@ -164,9 +169,10 @@ const MembroControladora = {
     
     }
 
-    const membroAtualizado = await membroRepositorio.editar(dados, idMembro)
     requisicao.nome = membroExistente.nome
     proximo()
+
+    const membroAtualizado = await membroRepositorio.editar(dados, idMembro)
     return resposta.status(200).json(membroAtualizado)
   },
     /**
@@ -177,7 +183,7 @@ const MembroControladora = {
         * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
     */
-  remover: async function (requisicao, resposta, proximo) {
+  remover: async function (requisicao, resposta,proximo) {
     const idMembro = requisicao.params.id
     const membroExiste = await membroRepositorio.buscarUm(idMembro)
    
@@ -188,8 +194,39 @@ const MembroControladora = {
     await membroRepositorio.remover(idMembro)
     requisicao.nome = membroExiste.nome
     proximo()
-    return resposta.status(200).json({Resultado :'Membro Deletado com Sucesso'})
+    return resposta.status(200).json({resultado :'Membro Deletado Com Sucesso'})
+  },
+    /**
+        * Lida com requisições PATCH recebendo o nome de um membro e uma senha, alterando-a, caso contrário responde com um erro(404) 
+        * @memberof membroControladora
+        * @method mudarSenha
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
+    */  
+  mudarSenha: async function (requisicao, resposta, proximo) {
+    const idMembro = requisicao.params.id
+    const senha = requisicao.body.senha
+
+    if(!senha){
+      return resposta.status(404).json({erro : 'Campo de Senha Vazio'})
+    }
+
+    membroExiste = await membroRepositorio.buscarUm(idMembro)
+
+    if(!membroExiste){
+      return resposta.status(404).json({erro : 'Membro Não Existente'})
+    }
+
+    const sal = await bcrypt.genSalt()
+		const hash = await bcrypt.hash(senha, sal)
+    
+    await membroRepositorio.mudarSenha(hash,idMembro)
+    requisicao.nome = membroExiste.nome
+    proximo()
+    return resposta.status(200).json({resultado: 'Senha Alterada Com Sucesso'})
   }
+
 }
 
 module.exports = MembroControladora

@@ -23,7 +23,7 @@ const MembroRepositorio = {
         nomeConhecimento = await bancoDeDados.query(`SELECT "nome" FROM "conhecimentos" 
           WHERE id_conhecimento = ${conhecimentos.rows[i].id_conhecimento}`)
         conhecimentos.rows[i].nome = nomeConhecimento.rows[0].nome
-        delete conhecimentos.rows[i].id_membro  
+        delete conhecimentos.rows[i].id_membro
       }
       resultado.rows[0].conhecimentos = conhecimentos.rows
     }
@@ -89,8 +89,8 @@ const MembroRepositorio = {
   * @returns {Boolean} Retorno verdadeiro utilizado apenas para determinar o fim da função
   */
   inserir: async function (dados)  {
-    await bancoDeDados.query(`INSERT INTO "membros" ("nome","cargo","matricula","rfid") 
-      VALUES ( '${dados.nome}', '${dados.cargo}', '${dados.matricula}', '${dados.rfid}');`)
+    await bancoDeDados.query(`INSERT INTO "membros" ("nome","cargo","matricula","senha","rfid") 
+      VALUES ( '${dados.nome}', '${dados.cargo}', '${dados.matricula}', '${dados.senha}', '${dados.rfid}');`)
     return true
  },
   /**
@@ -129,6 +129,18 @@ const MembroRepositorio = {
   */
   remover: async function  (id) {
     await bancoDeDados.query(`DELETE from "membros" WHERE "id_membro" = ${id};`)
+  },
+  /**
+  * Altera a senha de um membro
+  * @memberof MembroRepositorio
+  * @async
+  * @method mudarSenha
+  * @parameter {String} senha - Nova senha a ser alterada
+  * @parameter {String} membro - Nome do membro a ter sua senha alterada
+  */
+  mudarSenha: async function (senha, idMembro) {
+    await bancoDeDados.query(`UPDATE "membros" SET "senha" = '${senha}' WHERE "id_membro" = ${idMembro};`)
+    return true
   }
 }
 

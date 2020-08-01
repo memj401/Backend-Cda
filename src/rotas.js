@@ -46,6 +46,7 @@ roteador.get('/membros/:id', membroControladora.buscar)
 roteador.post('/membros', membroControladora.inserir, gerarEntradaPainelDeControle)
 roteador.put('/membros/:id', membroControladora.editar, gerarEntradaPainelDeControle)
 roteador.delete('/membros/:id', membroControladora.remover, gerarEntradaPainelDeControle)
+roteador.patch('/membros/:id',membroControladora.mudarSenha, gerarEntradaPainelDeControle)
 
 //Funcionalidades Relacionadas aos Conhecimentos do Membro
 roteador.post('/membros/:id_membro/conhecimentos/:id_conhecimento', conhecimentoDoMembroControladora.inserir, gerarEntradaPainelDeControle)
