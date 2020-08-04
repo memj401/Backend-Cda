@@ -30,9 +30,9 @@ painelDeControleRepositorio = {
         await bancoDeDados.query(`DELETE FROM "painel_de_controle"`)
     },
     listarRelatorios: async function(){
-        const arquivos = await glob.sync("*.pdf", {cwd:"../relatorios/Controle"})
+        const arquivos = await glob.sync("*.pdf", {cwd:"./src/relatorios/Controle"})
         const relatorios = await arquivos.map((arquivo)=>{
-            return {arquivo:arquivo, link:`../../cda-interno-backend/src/relatorios/Controle/${arquivo}`}
+            return {arquivo:arquivo, rota:`/relatorios/antigos/controle/${arquivo}`}
         })
         return relatorios
     }

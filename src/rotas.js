@@ -71,6 +71,8 @@ roteador.post('/horarios', horariosControladora.inserir, gerarEntradaPainelDeCon
 roteador.delete('/horarios', horariosControladora.remover, gerarEntradaPainelDeControle)
 
 //Funcionalidades relacionadas ao Painel de Controle
-roteador.get('/painel', painelDeControleControladora.listarTudo)
+roteador.get('/relatorios/controle', painelDeControleControladora.listarTudo)
+roteador.get('/relatorios/antigos/controle', painelDeControleControladora.listarRelatoriosAntigos)
+roteador.get('/relatorios/antigos/controle/:arquivo', painelDeControleControladora.buscarPdfControle)
 
 module.exports = roteador
