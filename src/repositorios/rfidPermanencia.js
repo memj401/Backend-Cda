@@ -1,4 +1,7 @@
 const bancoDeDados = require('../bancoDeDados/index')
+const ejs = require('ejs');
+const puppeteer = require('puppeteer-core');
+const glob = require('glob');
 
 /**
     * Repositório de funções do banco de dados do RFID de começo e fim do horário de permanência
@@ -54,9 +57,9 @@ const rfidPermanencia = {
         await bancoDeDados.query(`DELETE FROM "rfid_permanencia"`)
     },
     listarRelatorios: async function(){
-        const arquivos = await glob.sync("*.pdf", {cwd:"../relatorios/Permanencia"})
+        const arquivos = await glob.sync("*.pdf", {cwd:"./src/relatorios/Permanencia"})
         const relatorios = await arquivos.map((arquivo)=>{
-            return {arquivo:arquivo, link:`../../cda-interno-backend/src/relatorios/Permanencia/${arquivo}`}
+            return {arquivo:arquivo, rota:`/relatorios/antigos/permanencia/${arquivo}`}
         })
         return relatorios
     }

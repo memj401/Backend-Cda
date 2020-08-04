@@ -2,6 +2,8 @@ const membroRepositorio = require('../repositorios/membro')
 const acessoRepositorio = require('../repositorios/rfidAcesso')
 const permanenciaRepositorio = require('../repositorios/rfidPermanencia')
 const horarioRepositorio = require('../repositorios/horarioDoMembro')
+const path = require('path')
+
 /**
     * Controladora de funções envolvendo RFID e a requisição HTTP
     * @namespace eletronicaControladora
@@ -97,11 +99,18 @@ const eletronicaControladora = {
     },
     listarPermanencias: async function (requisicao, resposta){
         const dados = await permanenciaRepositorio.buscarTodos()
+        if (dados == false){
+            return resposta.status(400).json({erro: "Não há entradas em Permanencias"})
+        }
         return resposta.status(200).json(dados)
     },
     listarPermanenciasAntigas: async function (requisicao, resposta){
         const dados = await permanenciaRepositorio.listarRelatorios()
         return resposta.status(200).json(dados)
+    },
+    buscarPdfPermanencia: async function (requisicao, resposta){
+        const arquivo = requisicao.params.arquivo
+        return resposta.status(200).sendFile(path.resolve(`src/relatorios/Permanencia/${arquivo}`))
     },
     /**
         * Lida com requisição GET respondendo com um vetor com todas as entradas ordenadas de mais recente pra menos recente
@@ -113,6 +122,9 @@ const eletronicaControladora = {
     */
     listarAcessos: async function (requisicao, resposta){
         const dados = await acessoRepositorio.buscarTodos()
+        if (dados == false){
+            return resposta.status(400).json({erro: "Não há entradas em Permanencias"})
+        }
         return resposta.status(200).json(dados)
     },
     listarAcessosAntigos: async function (requisicao, resposta){
@@ -121,7 +133,7 @@ const eletronicaControladora = {
     },
     buscarPdfAcesso: async function (requisicao, resposta){
         const arquivo = requisicao.params.arquivo
-        return resposta.status(200).sendFile(`./src/relatorios/Acessos/${arquivo}`)
+        return resposta.status(200).sendFile(path.resolve(`src/relatorios/Acessos/${arquivo}`))
     }
 }
 
