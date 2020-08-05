@@ -17,6 +17,12 @@ const rfidPermanencia = {
     inserirSaida: async function(nome, valido){
         await bancoDeDados.query(`UPDATE "rfid_permanencia" SET "valido_saida" = ${valido} WHERE "nome" = '${nome}' AND "data" = CURRENT_DATE;`)
         await bancoDeDados.query(`UPDATE "rfid_permanencia" SET "saida" = LOCALTIME WHERE "nome" = '${nome}' AND "data" = CURRENT_DATE;`)
+        const queryEntradaMaisAntiga = await (await bancoDeDados.query(`SELECT "data" FROM "rfid_permanencia" ORDER BY "data" ASC,"saida" DESC LIMIT 1;`)).rows[0]
+        const entradaMaisAntiga = queryEntradaMaisAntiga.data.toString().split('GMT')[0] 
+        const diasDesdeUltimoRelatorio = await (await bancoDeDados.query(`SELECT (CURRENT_DATE - '${entradaMaisAntiga}') AS DAYS;`)).rows[0].day
+        if (diasDesdeUltimoRelatorio > 30){
+            await this.gerarRelatorio()
+        }
     },
 
     buscarUm: async function(nome){

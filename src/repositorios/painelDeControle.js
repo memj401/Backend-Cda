@@ -1,4 +1,7 @@
 const bancoDeDados = require('../bancoDeDados/index')
+const ejs = require('ejs');
+const puppeteer = require('puppeteer-core');
+const glob = require('glob');
 
 painelDeControleRepositorio = {
 	
