@@ -4,7 +4,17 @@ const puppeteer = require('puppeteer-core');
 const glob = require('glob');
 
 painelDeControleRepositorio = {
-	
+    inserir: async function (usuario, alteracao) {
+    const queryEntradaMaisAntiga = await (await bancoDeDados.query(`SELECT "data" FROM "painel_de_controle" ORDER BY "data" ASC,"hora" DESC LIMIT 1;`)).rows[0]
+    const entradaMaisAntiga = queryEntradaMaisAntiga.data.toString().split('GMT')[0] 
+    const diasDesdeUltimoRelatorio = await (await bancoDeDados.query(`SELECT (CURRENT_DATE - '${entradaMaisAntiga}') AS DAYS;`)).rows[0].day
+    if (diasDesdeUltimoRelatorio > 30){
+        await this.gerarRelatorio()
+    }
+    await bancoDeDados.query(`INSERT INTO "painel_de_controle" ("data", "hora","usuario","alteracao")
+        VALUES (CURRENT_DATE, CURRENT_TIME, '${usuario}','${alteracao}');`)
+    return true
+    },
 	buscarTodos: async function () {
 		const resultado = await bancoDeDados.query(`SELECT * FROM "painel_de_controle" ORDER BY "data" DESC,"hora" DESC;`)
 		const dataFormatada = await bancoDeDados.query(`SELECT "hora", TO_CHAR("data", 'dd/mm/yyyy') 
@@ -38,11 +48,6 @@ painelDeControleRepositorio = {
             return {arquivo:arquivo, rota:`/relatorios/antigos/controle/${arquivo}`}
         })
         return relatorios
-    },
-    inserir: async function (usuario, alteracao) {
-    await bancoDeDados.query(`INSERT INTO "painel_de_controle" ("data", "hora","usuario","alteracao")
-        VALUES (CURRENT_DATE, CURRENT_TIME, '${usuario}','${alteracao}');`)
-    return true
     }
 }
 
