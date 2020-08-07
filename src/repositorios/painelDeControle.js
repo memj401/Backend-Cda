@@ -38,6 +38,11 @@ painelDeControleRepositorio = {
             return {arquivo:arquivo, rota:`/relatorios/antigos/controle/${arquivo}`}
         })
         return relatorios
+    },
+    inserir: async function (usuario, alteracao) {
+    await bancoDeDados.query(`INSERT INTO "painel_de_controle" ("data", "hora","usuario","alteracao")
+        VALUES (CURRENT_DATE, CURRENT_TIME, '${usuario}','${alteracao}');`)
+    return true
     }
 }
 
