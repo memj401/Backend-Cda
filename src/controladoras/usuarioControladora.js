@@ -33,7 +33,12 @@ const usuarioControladora = {
     */
 	inserir: async function (requisicao, resposta, proximo) {
 		const dados = requisicao.body
+		const permissaoDoUsuario = requisicao.permissao
 		const somenteDigitosPermissao = /^\d+$/.test(dados.permissao)
+
+		if (permissaoDoUsuario > 2) {
+			return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+		}
 		
 		if (!dados.nome || !dados.senha || !dados.permissao) {
 			return resposta.status(400).json({erro : 'Estão Faltando Campos'})
@@ -72,7 +77,12 @@ const usuarioControladora = {
     */
 	remover: async function (requisicao, resposta, proximo) {
 		const nomeDeUsuario = requisicao.params.usuario
+		const permissaoDoUsuario = requisicao.permissao
 		const usuarioExiste = await usuarioRepositorio.buscar(nomeDeUsuario)
+
+		if (permissaoDoUsuario > 1) {
+			return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+		}		
  		
  		if (!usuarioExiste) {
 			return resposta.status(404).json({erro : 'Usuário Não Encontrado'})
@@ -93,9 +103,14 @@ const usuarioControladora = {
     */
 	editar: async function (requisicao, resposta, proximo) {
 		const nomeDeUsuario = requisicao.params.usuario
+		const permissaoDoUsuario = requisicao.permissao
 		const dados = requisicao.body
 		const usuarioExiste = await usuarioRepositorio.buscar(nomeDeUsuario)
 		const somenteDigitosPermissao = /^\d+$/.test(dados.permissao)
+
+		if (permissaoDoUsuario > 1) {
+			return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+		}
 		
 		if (!usuarioExiste) {
 			return resposta.status(400).json({erro : 'Usuário Não Encontrado'})
@@ -148,9 +163,18 @@ const usuarioControladora = {
         * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
     */
 	mudarSenha: async function (requisicao, resposta, proximo) {
+		const permissaoDoUsuario = requisicao.permissao
+		const usuarioLogado = requisicao.usuario
 		const nomeDeUsuario = requisicao.params.usuario
 		const senha = requisicao.body.senha
 		const usuarioExiste = await usuarioRepositorio.buscar(nomeDeUsuario)
+
+		if (permissaoDoUsuario > 1) {
+			
+			if (usuarioLogado !== nomeDeUsuario) {
+				return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+			}
+		}
 		
 		if (!usuarioExiste) {
 			return resposta.status(400).json({erro : 'Usuário Não Encontrado'})

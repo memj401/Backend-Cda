@@ -8,6 +8,17 @@ conhecimentoDoMembroControladora = {
 		const idMembro = requisicao.params.id_membro
 		const idConhecimento = requisicao.params.id_conhecimento
 		const nivel = requisicao.body.nivel
+		const permissaoDoUsuario = requisicao.permissao
+    	const usuarioLogado = requisicao.usuario
+
+	    if (permissaoDoUsuario === 5) {
+	      const membro = await membroRepositorio.buscarUmPor('nome', usuarioLogado)
+	      if (membro.id_membro != idMembro) {
+	        return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+	      }
+	    } else if (permissaoDoUsuario > 4) {
+	      return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+	    }    	
 
 		const membroExiste = await membroRepositorio.buscarUm(idMembro)
 
@@ -46,6 +57,17 @@ conhecimentoDoMembroControladora = {
 	remover: async function (requisicao, resposta, proximo) {
 		const idMembro = requisicao.params.id_membro
 		const idConhecimento = requisicao.params.id_conhecimento
+	    const permissaoDoUsuario = requisicao.permissao
+	    const usuarioLogado = requisicao.usuario
+	    
+	    if (permissaoDoUsuario === 5) {
+	      const membro = await membroRepositorio.buscarUmPor('nome', usuarioLogado)
+	      if (membro.id_membro != idMembro) {
+	        return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+	      }
+	    } else if (permissaoDoUsuario > 4) {
+	      return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+	    }		
 
 		const conhecimentoDoMembroExiste = await conhecimentoDoMembroRepositorio.buscar(idMembro, idConhecimento)
 
@@ -64,7 +86,18 @@ conhecimentoDoMembroControladora = {
 		const idMembro = requisicao.params.id_membro
 		const idConhecimento = requisicao.params.id_conhecimento
 		const nivel = requisicao.body.nivel
+		const permissaoDoUsuario = requisicao.permissao
+    	const usuarioLogado = requisicao.usuario
 
+	    if (permissaoDoUsuario === 5) {
+	      const membro = await membroRepositorio.buscarUmPor('nome', usuarioLogado)
+	      if (membro.id_membro != idMembro) {
+	        return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+	      }
+	    } else if (permissaoDoUsuario > 4) {
+	      return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+	    }
+	    
 		const conhecimentoDoMembroExiste = await conhecimentoDoMembroRepositorio.buscar(idMembro, idConhecimento)
 
 		if (!conhecimentoDoMembroExiste) {

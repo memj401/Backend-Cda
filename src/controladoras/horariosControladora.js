@@ -21,6 +21,11 @@ const HorariosControladora = {
 
     inserir: async function(requisicao, resposta, proximo){
         const cronograma = requisicao.body
+        const permissaoDoUsuario = requisicao.permissao
+
+        if (permissaoDoUsuario > 3) {
+            return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+        }
 
         function somenteDigitosEntrada(vetor){
            return /^\d+$/.test(vetor)
@@ -115,6 +120,12 @@ const HorariosControladora = {
 */
 
     remover: async function(requisicao, resposta, proximo) {
+        const permissaoDoUsuario = requisicao.permissao
+        
+        if (permissaoDoUsuario > 3) {
+            return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+        }
+
         await horariosRepositorio.remover()
         proximo()
         return resposta.status(200).json({Resultado :'Horários Dos Membros Deletados com Sucesso'})

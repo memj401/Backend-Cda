@@ -23,6 +23,12 @@ const conhecimentoControladora = {
 	inserir: async function (requisicao, resposta, proximo) {
 		const conhecimento = requisicao.body.conhecimento
 		const descricao = requisicao.body.descricao
+	    const permissaoDoUsuario = requisicao.permissao
+	    
+	    if (permissaoDoUsuario > 4) {
+	      return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+	    }
+
 		if (!conhecimento) {
 			return resposta.status(400).json({erro : 'Requisição Vazia'})
 		}
@@ -43,7 +49,12 @@ const conhecimentoControladora = {
 	editar: async function (requisicao, resposta, proximo) {
 		idConhecimento = requisicao.params.id
 		const dados = requisicao.body
-		
+	    const permissaoDoUsuario = requisicao.permissao
+	    
+	    if (permissaoDoUsuario > 4) {
+	      return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+	    }
+
 		const conhecimentoExiste = await conhecimentoRepositorio.buscar(idConhecimento)
 		
 		if (!dados.nome && !dados.descricao) {
@@ -69,6 +80,11 @@ const conhecimentoControladora = {
 	remover: async function (requisicao, resposta, proximo) {
 		const idConhecimento = requisicao.params.id
 		const conhecimentoExiste = await conhecimentoRepositorio.buscar(idConhecimento)
+	    const permissaoDoUsuario = requisicao.permissao
+	    
+	    if (permissaoDoUsuario > 4) {
+	      return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+	    }		
 		
 		if (!conhecimentoExiste) {
 			return resposta.status(404).json({erro: 'Conhecimento não encontrado'})

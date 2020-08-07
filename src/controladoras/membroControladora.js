@@ -83,7 +83,12 @@ const MembroControladora = {
     const dados = requisicao.body
     const somenteDigitosMatricula = /^\d+$/.test(dados.matricula) //Expressão Regular Checa se o campo da matrícula tem somente dígitos
     const somenteDigitosRfid = /^\d+$/.test(dados.rfid)          // Expressão Regular Checa se o campo do rfid tem somente dígitos
+    const permissaoDoUsuario = requisicao.permissao
     
+    if (permissaoDoUsuario > 3) {
+      return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+    }
+
     if (!dados.nome || !dados.cargo || !dados.matricula || !dados.rfid) {
       return resposta.status(400).json({erro : 'Estão Faltando Campos'})
     }
@@ -132,6 +137,17 @@ const MembroControladora = {
     const dados = requisicao.body
     const somenteDigitosMatricula = /^\d+$/.test(dados.matricula) 
     const somenteDigitosRfid = /^\d+$/.test(dados.rfid)          
+    const permissaoDoUsuario = requisicao.permissao
+    const usuarioLogado = requisicao.usuario
+    
+    if (permissaoDoUsuario === 5) {
+      const membro = await membroRepositorio.buscarUmPor('nome', usuarioLogado)
+      if (membro.id_membro != idMembro) {
+        return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+      }
+    } else if (permissaoDoUsuario > 3) {
+      return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+    }
 
     const membroExistente = await membroRepositorio.buscarUm(idMembro)
     
@@ -186,7 +202,12 @@ const MembroControladora = {
   remover: async function (requisicao, resposta,proximo) {
     const idMembro = requisicao.params.id
     const membroExiste = await membroRepositorio.buscarUm(idMembro)
-   
+    const permissaoDoUsuario = requisicao.permissao
+    
+    if (permissaoDoUsuario > 3) {
+      return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+    }
+
    if (!membroExiste) {
       return resposta.status(404).json({erro : 'Membro Não Encontrado'})
     }
@@ -207,6 +228,17 @@ const MembroControladora = {
   mudarSenha: async function (requisicao, resposta, proximo) {
     const idMembro = requisicao.params.id
     const senha = requisicao.body.senha
+    const permissaoDoUsuario = requisicao.permissao
+    const usuarioLogado = requisicao.usuario
+
+    if (permissaoDoUsuario === 5) {
+      const membro = await membroRepositorio.buscarUmPor('nome', usuarioLogado)
+      if (membro.id_membro != idMembro) {
+        return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+      }
+    } else if (permissaoDoUsuario > 3) {
+      return resposta.status(401).json({erro : 'Acesso Não Autorizado'})
+    }
 
     if(!senha){
       return resposta.status(404).json({erro : 'Campo de Senha Vazio'})
