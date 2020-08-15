@@ -3,7 +3,21 @@ const ejs = require('ejs');
 const puppeteer = require('puppeteer-core');
 const glob = require('glob');
 
+/**
+* Repositóriodo Painel de Controle
+* @namespace painelDeControleRepositorio
+*/
+
 painelDeControleRepositorio = {
+/**
+  * Insere uma entrada no Painel de Controle, denotado alguma alteração no CdA
+  * @memberof painelDeControleRepositorio
+  * @async
+  * @method inserir
+  * @parameter {String} usuario - usuário que realizou a alteração
+  * @parameter {String} alteracao - tipo de alteracao realizada pelo usuário
+  * @returns {Object} Retorna as informações do membro desejado
+  */
     inserir: async function (usuario, alteracao) {
     const queryEntradaMaisAntiga = await (await bancoDeDados.query(`SELECT "data" FROM "painel_de_controle" ORDER BY "data" ASC,"hora" DESC LIMIT 1;`)).rows[0]
     const entradaMaisAntiga = queryEntradaMaisAntiga.data.toString().split('GMT')[0] 
@@ -24,6 +38,12 @@ painelDeControleRepositorio = {
 		});
 		return resultado.rows
 	},
+/**
+  * Gera um pdf com todas as entradas do painel de Controle
+  * @memberof painelDeControleRepositorio
+  * @async
+  * @method gerarRelatorio
+  */
 	gerarRelatorio: async function(){
         const tabela = await this.buscarTodos()
         const entradaMaisRecente = tabela[0]
@@ -42,6 +62,13 @@ painelDeControleRepositorio = {
         })
         await bancoDeDados.query(`DELETE FROM "painel_de_controle"`)
     },
+/**
+  * Lista os pdf's anteriormente gerados pelo painel de controle
+  * @memberof painelDeControleRepositorio
+  * @async
+  * @method listarRelatorios
+  * @returns {Array} Retorna um lista dos pdf's gerados anteriormente
+  */    
     listarRelatorios: async function(){
         const arquivos = await glob.sync("*.pdf", {cwd:"./src/relatorios/Controle"})
         const relatorios = await arquivos.map((arquivo)=>{

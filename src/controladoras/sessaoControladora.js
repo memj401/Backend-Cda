@@ -45,7 +45,7 @@ const sessaoControladora = {
       }
       
       const jwt = await njwt.create(info,chave)
-      //await jwt.setExpiration(new Date().getTime() + 15000)
+      await jwt.setExpiration(new Date().getTime() + (5)*(60)*(60)*(1000))
       const token = await jwt.compact()
 
       delete usuarioExistente.senha
@@ -77,7 +77,7 @@ const sessaoControladora = {
       }
       
       const jwt = await njwt.create(info,chave)
-      //await jwt.setExpiration(new Date().getTime() + 15000)
+      await jwt.setExpiration(new Date().getTime() + (5)*(60)*(60)*(1000))
       const token = await jwt.compact()
 
       delete MembroExistente.senha

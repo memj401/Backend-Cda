@@ -9,11 +9,26 @@ const glob = require('glob');
 */
 
 const rfidPermanencia = {
+/**
+  * Insere a entrada do membro na tabela de permanência, em função do horário que o membro passou o cartão no rfid
+  * @memberof repositorioPermanencia
+  * @async
+  * @method inserirEntrada
+  * @parameter {String} nome - nome do membro a ser inserido na tabela de permanência
+  * @parameter {Boolean} valido - valor que determina se o horário está de acordo com o do Horário de Permanência 
+  */
     inserirEntrada: async function(nome, valido){
         await bancoDeDados.query(`INSERT INTO "rfid_permanencia" ("nome","data","entrada","valido_entrada") 
             VALUES ('${nome}', CURRENT_DATE, LOCALTIME, ${valido});`)
     },
-
+/**
+  * Insere a saída do membro na tabela de permanência, em função do horário que o membro passou o cartão no rfid
+  * @memberof repositorioPermanencia
+  * @async
+  * @method inserirSaida
+  * @parameter {String} nome - nome do membro a ser inserido na tabela de permanência
+  * @parameter {Boolean} valido - valor que determina se o horário está de acordo com o do Horário de Permanência 
+  */
     inserirSaida: async function(nome, valido){
         await bancoDeDados.query(`UPDATE "rfid_permanencia" SET "valido_saida" = ${valido} WHERE "nome" = '${nome}' AND "data" = CURRENT_DATE;`)
         await bancoDeDados.query(`UPDATE "rfid_permanencia" SET "saida" = LOCALTIME WHERE "nome" = '${nome}' AND "data" = CURRENT_DATE;`)
@@ -24,7 +39,15 @@ const rfidPermanencia = {
             await this.gerarRelatorio()
         }
     },
-
+/**
+  * Busca se houve uma entrada do membro no dia 
+  * @memberof repositorioPermanencia
+  * @async
+  * @method buscarUm
+  * @parameter {String} nome - nome do membro
+  * @returns {Object} Retorna as informação da determinada entrada, caso exista.
+  * Do contrário, retorna falso
+  */
     buscarUm: async function(nome){
         const busca = await bancoDeDados.query(`SELECT * FROM "rfid_permanencia" 
             WHERE "nome" = '${nome}' AND "data" BETWEEN CURRENT_DATE AND CURRENT_DATE;`)
@@ -34,7 +57,13 @@ const rfidPermanencia = {
         }
         return false
     },
-
+/**
+  * Busca todas as informações presentes na tabela de permanência
+  * @memberof repositorioPermanencia
+  * @async
+  * @method buscarTodos
+  * @returns {Object} Retorna todas as informações presentes na tabela de permanência, formatadas 
+  */
     buscarTodos: async function(){
         const historico = await bancoDeDados.query(`SELECT * FROM "rfid_permanencia" ORDER BY "data" DESC,"entrada" DESC;`)
         const datasFormatadas = await bancoDeDados.query(`SELECT "entrada", TO_CHAR("data", 'dd/mm/yyyy') 
@@ -44,6 +73,12 @@ const rfidPermanencia = {
         }
         return historico.rows
     },
+/**
+  * Gera um pdf com todas as entradas da Tabela de Permanência
+  * @memberof repositorioPermanencia
+  * @async
+  * @method gerarRelatorio
+  */
     gerarRelatorio: async function(){
         const tabela = await this.buscarTodos()
         const entradaMaisRecente = tabela[0]
@@ -62,6 +97,13 @@ const rfidPermanencia = {
         })
         await bancoDeDados.query(`DELETE FROM "rfid_permanencia"`)
     },
+/**
+  * Lista os pdf's anteriormente gerados pelo controle de permanência
+  * @memberof repositorioPermanencia
+  * @async
+  * @method listarRelatorios
+  * @returns {Array} Retorna um lista dos pdf's gerados anteriormente
+  */
     listarRelatorios: async function(){
         const arquivos = await glob.sync("*.pdf", {cwd:"./src/relatorios/Permanencia"})
         const relatorios = await arquivos.map((arquivo)=>{

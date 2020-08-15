@@ -9,9 +9,10 @@ const MembroRepositorio = {
   /**
   * Busca no banco de dados por dados de um membro armazenados através de sua identificação no sistema
   * @memberof MembroRepositorio
+  * @async
   * @method buscarUm
   * @parameter {Number} id - Identificação numérica do membro a ser pesquisado no banco de dados
-  * @returns {Object} Uma linha da tabela referente ao membro pesquisado
+  * @returns {Object} Retorna as informações do membro e os conhecinhementos que ele possui
   */
  buscarUm: async function(id) {
     const resultado = await bancoDeDados.query(`SELECT * FROM "membros" WHERE "id_membro" = ${id};`)
@@ -37,7 +38,7 @@ const MembroRepositorio = {
   * @method buscarUmPor
   * @parameter {String} parametro - Parâmetro da tabela a ser comparado
   * @parameter {String} valor - Valor do parâmetro da tabela a ser pesquisado
-  * @returns {Object} Uma linha da tabela referente ao membro pesquisado
+  * @returns {Object} Retorna as informações do membro desejado
   */
   buscarUmPor: async function (parametro, valor) {
     const resultado = await bancoDeDados.query(`SELECT * FROM "membros" WHERE "${parametro}" = '${valor}';`)
@@ -86,7 +87,7 @@ const MembroRepositorio = {
   * @async
   * @method inserir
   * @parameter {Object} dados - Informações do membro a ser adicionado na tabela contendo: nome,cargo,matricula e código rfid
-  * @returns {Boolean} Retorno verdadeiro utilizado apenas para determinar o fim da função
+  * @returns {Boolean} Retorna verdadeiro com intuito de explicitar o fim do método
   */
   inserir: async function (dados)  {
     await bancoDeDados.query(`INSERT INTO "membros" ("nome","cargo","matricula","senha","rfid") 
@@ -131,12 +132,13 @@ const MembroRepositorio = {
     await bancoDeDados.query(`DELETE from "membros" WHERE "id_membro" = ${id};`)
   },
   /**
-  * Altera a senha de um membro
+  * Altera a senha de um membro, utilizada no login do sistema
   * @memberof MembroRepositorio
   * @async
   * @method mudarSenha
   * @parameter {String} senha - Nova senha a ser alterada
   * @parameter {String} membro - Nome do membro a ter sua senha alterada
+  * @returns {Boolean} Retorna verdadeiro com intuito de explicitar o fim do método
   */
   mudarSenha: async function (senha, idMembro) {
     await bancoDeDados.query(`UPDATE "membros" SET "senha" = '${senha}' WHERE "id_membro" = ${idMembro};`)

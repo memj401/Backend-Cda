@@ -9,22 +9,24 @@ const glob = require('glob');
 
 const rfidAcesso = {
     /**
-        * Busca a entrada mais recente no banco de dados
+        * Busca a entrada mais recente na tabela de acessos do banco de dados
         * @memberof repositorioAcesso
+        * @async
         * @method buscarUltima
-        * @returns {Object} Uma linha da tabela com os dados da entrada mais recente
+        * @returns {Object} Retorna a informações da última entrada na tabela de acessos
     */
     buscarUltima: async function() {
         const resultado = await bancoDeDados.query(`SELECT * FROM "rfid_acesso" ORDER BY "data" DESC,"horario" DESC LIMIT 1;`)
         return (resultado.rows[0])
     },
     /**
-        *Insere uma entrada no banco de dados
+        *Insere uma entrada na tabela de acessos do banco de dados
         * @memberof repositorioAcesso
+        * @async
         * @method inserir
-        * @param {Object} dados Um objeto que contém os dados necessários para criar a entrada no banco de dados
-        * @param {String} dados.rfid Uma string contendo o valor o código do rfid formatado adequadamente
-        * @param {Boolean} dados.valido Um booleano que indica se o cartão é valido ou não 
+        * @param {Object} dados -  Um objeto que contém os dados necessários para criar a entrada no banco de dados
+        * @param {String} dados.rfid - Uma string contendo o valor o código do rfid formatado adequadamente
+        * @param {Boolean} dados.valido - Um booleano que indica se o cartão é valido ou não 
     */
     inserir: async function(dados){
         const queryEntradaMaisAntiga = await (await bancoDeDados.query(`SELECT "data" FROM "rfid_acesso" ORDER BY "data" ASC,"horario" DESC LIMIT 1;`)).rows[0]
@@ -37,10 +39,10 @@ const rfidAcesso = {
             VALUES ('${dados.nome}', '${dados.rfid}', ${dados.valido}, CURRENT_DATE, LOCALTIME);`)
     },
     /**
-        * Busca todas as entradas do banco de dados em ordem da mais recente para menos recente
+        * Busca todas as entradas da tabela de acessos em ordem da mais recente para menos recente
         * @memberof repositorioAcesso
         * @method buscarTodos
-        * @returns {Array} Um array de objetos contendo todas as linhas da tabela
+        * @returns {Array} Um array de objetos contendo todas as informações da tabela
     */
     buscarTodos: async function(){
         const historico = await bancoDeDados.query(`SELECT * FROM "rfid_acesso" ORDER BY "data" DESC,"horario" DESC;`)
@@ -51,6 +53,12 @@ const rfidAcesso = {
         });
         return historico.rows
     },
+/**
+  * Gera um pdf com todas as entradas da Tabela de Acessos
+  * @memberof repositorioAcesso
+  * @async
+  * @method gerarRelatorio
+  */
     gerarRelatorio: async function(){
         const tabela = await this.buscarTodos()
         const entradaMaisRecente = tabela[0]
@@ -69,6 +77,13 @@ const rfidAcesso = {
         })
         await bancoDeDados.query(`DELETE FROM "rfid_acesso"`)
     },
+/**
+  * Lista os pdf's anteriormente gerados pelo controle de acesso
+  * @memberof repositorioAcesso
+  * @async
+  * @method listarRelatorios
+  * @returns {Array} Retorna um lista dos pdf's gerados anteriormente
+  */     
     listarRelatorios: async function(){
         const arquivos = await glob.sync("*.pdf", {cwd:"./src/relatorios/Acessos"})
         const relatorios = await arquivos.map((arquivo)=>{
