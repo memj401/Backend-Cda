@@ -12,7 +12,8 @@ const chave = require('../config/autenticacao/chaveSecreta').chaveSecreta
 
 const sessaoControladora = {
   /**
-      * Lida com a requisição POST recebendo informações de login de um usuário e criando uma sessão(enviando os tokens necessários para realizar operações no resto do servidor), caso o usuário não exista ou a senha esteja incorreta retorna um erro(401)
+      * Realiza o processo de login do usuário e gera o token JWT. 
+      * Também é possível realizar login como membro
       * @memberof sessãoControladora
       * @method criar
       * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo

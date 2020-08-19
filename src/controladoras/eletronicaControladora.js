@@ -11,7 +11,7 @@ const path = require('path')
 
 const eletronicaControladora = {
     /**
-        * Lida com a requisição post recebendo o valor do rfid e colocando no banco de dados
+        * Insere um Entrada na tabela de Acessos do RFID
         * @memberof eletronicaControladora
         * @method receberAcesso
         * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
@@ -23,12 +23,20 @@ const eletronicaControladora = {
         const buscaRfid =  await membroRepositorio.buscarUmPor("rfid",dados.rfid)
         const informaçõesDaEntrada={ 
             rfid: dados.rfid,
-            valido: (buscaRfid != undefined), // testar isso
+            valido: (buscaRfid != undefined),
             nome: (buscaRfid !=undefined) ? buscaRfid.nome : "Cartão Inválido"
         }
         acessoRepositorio.inserir(informaçõesDaEntrada)
         return resposta.status(200).end()
     },
+    /**
+        * Insere um Entrada na tabela de Permanência do RFID
+        * @memberof eletronicaControladora
+        * @method receberPermanencia
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
+    */
     receberPermanencia: async function (requisicao, resposta){
         const dados = requisicao.body
         const buscaMembro = await membroRepositorio.buscarUmPor("rfid",dados.rfid)
@@ -97,6 +105,14 @@ const eletronicaControladora = {
             return resposta.status(200).json(dados.rfid) // [0] é a coluna q vai ficar o RFID
         }
     },
+    /**
+        * Obtém todas as entradas da tabela de Permanencia do RFID
+        * @memberof eletronicaControladora
+        * @method listarPermanencias
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Object}  Retorna as informações retiradas da tabela
+    */    
     listarPermanencias: async function (requisicao, resposta){
         const dados = await permanenciaRepositorio.buscarTodos()
         if (dados == false){
@@ -104,21 +120,37 @@ const eletronicaControladora = {
         }
         return resposta.status(200).json(dados)
     },
+    /**
+        * Obtém a lista dos pdf's gerados anteriormente na parte de Permanência
+        * @memberof eletronicaControladora
+        * @method listarPermanenciasAntigas
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Object}  Retorna a lista dos pdf's cadastrados
+    */     
     listarPermanenciasAntigas: async function (requisicao, resposta){
         const dados = await permanenciaRepositorio.listarRelatorios()
         return resposta.status(200).json(dados)
     },
+    /**
+        * Obtém o pdf especificado da parte de Permanência
+        * @memberof eletronicaControladora
+        * @method buscarPdfPermanencia
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Object}  Retorna o pdf especificado
+    */      
     buscarPdfPermanencia: async function (requisicao, resposta){
         const arquivo = requisicao.params.arquivo
         return resposta.status(200).sendFile(path.resolve(`src/relatorios/Permanencia/${arquivo}`))
     },
     /**
-        * Lida com requisição GET respondendo com um vetor com todas as entradas ordenadas de mais recente pra menos recente
+        * Obtém todas as entradas da tabela de Acessos do RFID
         * @memberof eletronicaControladora
         * @method listarAcessos
         * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
         * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
-        * @returns {Promise} O retorno nessa função é desnecessário e é feito só para não gerar confusão quanto ao fim da função, o que importa é a chamada dos metodos do objeto "resposta", essa chamada seleciona um status para o resposta e prepara o conteudo
+        * @returns {Object} Retorna as informações retiradas da tabela
     */
     listarAcessos: async function (requisicao, resposta){
         const dados = await acessoRepositorio.buscarTodos()
@@ -127,10 +159,26 @@ const eletronicaControladora = {
         }
         return resposta.status(200).json(dados)
     },
+    /**
+        * Obtém a lista dos pdf's gerados anteriormente na parte de Acessos
+        * @memberof eletronicaControladora
+        * @method listarAcessosAntigos
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Object}  Retorna a lista dos pdf's cadastrados
+    */   
     listarAcessosAntigos: async function (requisicao, resposta){
         const dados = await acessoRepositorio.listarRelatorios()
         return resposta.status(200).json(dados)
     },
+    /**
+        * Obtém o pdf especificado da parte de Acessos
+        * @memberof eletronicaControladora
+        * @method buscarPdfPermanencia
+        * @param {Object} requisicao Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Object}  Retorna o pdf especificado
+    */      
     buscarPdfAcesso: async function (requisicao, resposta){
         const arquivo = requisicao.params.arquivo
         return resposta.status(200).sendFile(path.resolve(`src/relatorios/Acessos/${arquivo}`))

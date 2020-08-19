@@ -1,6 +1,19 @@
 const conhecimentoRepositorio = require('../repositorios/conhecimento')
 
+/**
+    * Controladora de funções relacionadas a parte de Conhecimentos
+    * @namespace conhecimentoControladora
+*/
+
 const conhecimentoControladora = {
+	 /**
+        * Lista todos os conhecimentos registrados no Banco de Dados
+        * @memberof conhecimentoControladora
+        * @method listarTodos
+        * @param {Object} requisicao - Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta - Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Object} Retorna um array com as informações de cada conhecimento registrado 
+    */
 	listarTodos: async function(requisicao, resposta) {
 		const conhecimentos = await conhecimentoRepositorio.buscarTodos()
 		if (conhecimentos.length === 0) {
@@ -8,8 +21,15 @@ const conhecimentoControladora = {
 		}
 		return resposta.status(200).json(conhecimentos)
 	},
-
-	buscar: async function (requisicao, resposta) {
+	 /**
+        * Busca as informações de um determinado  conhecimento registrado no Banco de Dados
+        * @memberof conhecimentoControladora
+        * @method buscar
+        * @param {Object} requisicao - Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta - Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Object} Retorna um array com as informações do conhecimento, além dos membros que tem o conhecimento
+    */
+	buscar: async function (requisicao, resposta) {		
 		const idConhecimento = requisicao.params.id
 		const conhecimento = await conhecimentoRepositorio.buscar(idConhecimento)
 		
@@ -19,7 +39,15 @@ const conhecimentoControladora = {
 
     	return resposta.status(200).json(conhecimento)
 	},
-
+	 /**
+        * Insere um conhecimento no banco de dados
+        * @memberof conhecimentoControladora
+        * @method inserir
+        * @param {Object} requisicao - Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta - Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+	   	* @param {Function} proximo - Referência para a próxima função da pilha (Gerar entrada no Painel De Controle)
+        * @returns {Object} Retorna as informações inseridas
+    */
 	inserir: async function (requisicao, resposta, proximo) {
 		const conhecimento = requisicao.body.conhecimento
 		const descricao = requisicao.body.descricao
@@ -45,7 +73,15 @@ const conhecimentoControladora = {
 		proximo()
 		return resposta.status(201).json(conhecimentoInserido)
 	},
-
+	 /**
+        * Edita um conhecimento no banco de dados
+        * @memberof conhecimentoControladora
+        * @method editar
+        * @param {Object} requisicao - Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta - Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+	   	* @param {Function} proximo - Referência para a próxima função da pilha (Gerar entrada no Painel De Controle)        
+	   	* @returns {Object} Retorna as informações atualizadas
+    */
 	editar: async function (requisicao, resposta, proximo) {
 		idConhecimento = requisicao.params.id
 		const dados = requisicao.body
@@ -76,7 +112,15 @@ const conhecimentoControladora = {
 		proximo()
 		return resposta.status(200).json(conhecimentoAtualizado)
 	},
-
+	 /**
+        * Remove um conhecimento no banco de dados
+        * @memberof conhecimentoControladora
+        * @method remover
+        * @param {Object} requisicao - Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta - Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+	   	* @param {Function} proximo - Referência para a próxima função da pilha (Gerar entrada no Painel De Controle)
+        * @returns {Object} Retorna uma mensagem indicando que a deleção foi bem sucedida
+    */
 	remover: async function (requisicao, resposta, proximo) {
 		const idConhecimento = requisicao.params.id
 		const conhecimentoExiste = await conhecimentoRepositorio.buscar(idConhecimento)

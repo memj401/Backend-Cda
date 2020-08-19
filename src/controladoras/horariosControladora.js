@@ -8,7 +8,14 @@ const bancoDecronograma = require('../bancoDeDados')
 */
 
 const HorariosControladora = {
-
+     /**
+        * Lista todos os horários registrados no Banco de Dados
+        * @memberof HorariosControladora
+        * @method listarTodos
+        * @param {Object} requisicao - Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta - Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @returns {Object} Retorna um array com as informações de cada horario registrado 
+    */
     listarTodos: async function(requisicao, resposta) {
         const horarios = await horariosRepositorio.buscarTudo()
 
@@ -18,7 +25,15 @@ const HorariosControladora = {
 
         return resposta.status(200).json(horarios)
     },
-
+     /**
+        * Insere um horário de Permanência
+        * @memberof HorariosControladora
+        * @method inserir
+        * @param {Object} requisicao - Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta - Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @param {Function} proximo - Referência para a próxima função da pilha (Gerar entrada no Painel De Controle)
+        * @returns {String} Retorna uma mensagem demonstrando que a inserção foi feita
+    */
     inserir: async function(requisicao, resposta, proximo){
         const cronograma = requisicao.body
         const permissaoDoUsuario = requisicao.permissao
@@ -87,38 +102,15 @@ const HorariosControladora = {
         proximo()
         return resposta.status(201).json({Resultado :'Membros Inseridos Com Sucesso'})
     },
-
-/*    editar: async function(requisicao, resposta) {
-        const idMembro = requisicao.params.id_membro 
-        const cronograma = requisicao.body
-        horarioEntrada = cronograma.entrada
-        dia = cronograma.dia
-        const somenteDigitosEntrada = /^\d+$/.test(horarioEntrada)
-        
-        if (!horarioEntrada || !dia) {
-            return resposta.status(400).json({erro: 'Requisição Incompleta'})
-        }
-        const membroExiste = await membroRepositorio.buscarUm(idMembro)
-        if(!membroExiste){
-            return resposta.status(404).json({erro: 'Membro Não Existente na Tabela de Membros'})
-        }
-        testeMembro = await horariosRepositorio.checarMembro(idMembro)
-        if(!testeMembro){
-            return resposta.status(404).json({erro: 'Membro Não Registrado Nos Horários'})
-        }
-        if(!somenteDigitosEntrada){
-            return resposta.status(400).json({erro: 'Horário de Entrada Inválido'})
-        } 
-        idHorario = await horariosRepositorio.buscarIdHorario(dia, horarioEntrada)
-        if(!idHorario){
-            return resposta.status(404).json({erro: 'Horário Não Existente'})
-        }
-    
-        const horarioAtualizado = await horariosRepositorio.editar(idMembro, idHorario)
-        return resposta.status(200).json(await horariosRepositorio.buscarMembro(idHorario))
-    },
-*/
-
+     /**
+        * Remove todos os horários de Permanência
+        * @memberof HorariosControladora
+        * @method remover
+        * @param {Object} requisicao - Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta - Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+        * @param {Function} proximo - Referência para a próxima função da pilha (Gerar entrada no Painel De Controle)
+        * @returns {String} Retorna uma mensagem demonstrando que a deleção foi feita
+    */
     remover: async function(requisicao, resposta, proximo) {
         const permissaoDoUsuario = requisicao.permissao
         

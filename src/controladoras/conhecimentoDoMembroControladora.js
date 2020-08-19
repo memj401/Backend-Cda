@@ -2,8 +2,21 @@ const conhecimentoRepositorio = require('../repositorios/conhecimento')
 const membroRepositorio = require('../repositorios/membro')
 const conhecimentoDoMembroRepositorio = require('../repositorios/conhecimentoDoMembro')
 
+/**
+    * Controladora de funções relacionadas a parte de Conhecimentos do Membro
+    * @namespace conhecimentoDoMembroControladora
+*/
 
 conhecimentoDoMembroControladora = {
+	/**
+        * Insere conhecimento de um membro
+        * @memberof conhecimentoDoMembroControladora
+        * @method inserir
+        * @param {Object} requisicao - Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta - Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+	   	* @param {Function} proximo - Referência para a próxima função da pilha (Gerar entrada no Painel De Controle)
+        * @returns {Object} Retorna as informações inseridas
+    */
 	inserir: async function (requisicao, resposta, proximo) {
 		const idMembro = requisicao.params.id_membro
 		const idConhecimento = requisicao.params.id_conhecimento
@@ -53,7 +66,15 @@ conhecimentoDoMembroControladora = {
 		proximo()
 		return resposta.status(201).json(info)
 	},
-
+	/**
+        * Remove conhecimento de um membro
+        * @memberof conhecimentoDoMembroControladora
+        * @method remover
+        * @param {Object} requisicao - Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta - Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+	   	* @param {Function} proximo - Referência para a próxima função da pilha (Gerar entrada no Painel De Controle)
+        * @returns {Object} Retorna uma mensagem indicando que a deleção foi bem sucedida
+    */
 	remover: async function (requisicao, resposta, proximo) {
 		const idMembro = requisicao.params.id_membro
 		const idConhecimento = requisicao.params.id_conhecimento
@@ -81,7 +102,15 @@ conhecimentoDoMembroControladora = {
 		proximo()
 		return resposta.status(200).json({Resultado :'Conhecimento do Membro Deletado com Sucesso'}) 
 	},
-
+	/**
+        * Edita conhecimento de um membro
+        * @memberof conhecimentoDoMembroControladora
+        * @method editar
+        * @param {Object} requisicao - Parametro padrão e fornecido pelo Express, guarda as informações da requisição como corpo e o tipo
+        * @param {Object} resposta - Parametro padrão e fornecido pelo Express, guarda as informações da resposta como o corpo e o status
+	   	* @param {Function} proximo - Referência para a próxima função da pilha (Gerar entrada no Painel De Controle)
+        * @returns {Object} Retorna as informações editadas
+    */
 	editar: async function (requisicao, resposta, proximo) {
 		const idMembro = requisicao.params.id_membro
 		const idConhecimento = requisicao.params.id_conhecimento
