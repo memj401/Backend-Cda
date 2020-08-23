@@ -21,6 +21,10 @@ roteador.post('/', sessaoControladora.criar)
 //Verificação do Token pro FrontEnd
 roteador.get('/verificar', verificarTokenFront)
 
+//Funcionalidades Relacionadas a passagem do RFID
+roteador.post('/rfid/acesso', eletronicaControladora.receberAcesso)
+roteador.post('/rfid/permanencia',eletronicaControladora.receberPermanencia)
+
 //Middleware de Verficação do JWT
 roteador.use(middlewareAutenticacao)
 
@@ -52,13 +56,13 @@ roteador.post('/membros/:id_membro/conhecimentos/:id_conhecimento', conhecimento
 roteador.patch('/membros/:id_membro/conhecimentos/:id_conhecimento', conhecimentoDoMembroControladora.editar, painelDeControleControladora.inserir)
 roteador.delete('/membros/:id_membro/conhecimentos/:id_conhecimento', conhecimentoDoMembroControladora.remover, painelDeControleControladora.inserir)
 
-//Funcionalidades da parte eletrônica 
+//Funcionalidades da Parte de Acessos no RFID
 roteador.get('/cadastro', eletronicaControladora.buscarParaCadastro)
-roteador.post('/rfid/acesso', eletronicaControladora.receberAcesso)
 roteador.get('/relatorios/acessos', eletronicaControladora.listarAcessos)
 roteador.get('/relatorios/antigos/acessos', eletronicaControladora.listarAcessosAntigos)
 roteador.get('/relatorios/antigos/acessos/:arquivo', eletronicaControladora.buscarPdfAcesso)
-roteador.post('/rfid/permanencia',eletronicaControladora.receberPermanencia)
+
+//Funcionalidades da Parte de Horário de Permanência no RFID
 roteador.get('/relatorios/permanencia', eletronicaControladora.listarPermanencias)
 roteador.get('/relatorios/antigos/permanencia', eletronicaControladora.listarPermanenciasAntigas)
 roteador.get('/relatorios/antigos/permanencia/:arquivo', eletronicaControladora.buscarPdfPermanencia)
@@ -66,7 +70,6 @@ roteador.get('/relatorios/antigos/permanencia/:arquivo', eletronicaControladora.
 //Funcionalidades relacionadas aos horários de permanência
 roteador.get('/horarios', horariosControladora.listarTodos)
 roteador.post('/horarios', horariosControladora.inserir, painelDeControleControladora.inserir)
-//roteador.put('/horarios/:id_membro', horariosControladora.editar)
 roteador.delete('/horarios', horariosControladora.remover, painelDeControleControladora.inserir)
 
 //Funcionalidades relacionadas ao Painel de Controle
