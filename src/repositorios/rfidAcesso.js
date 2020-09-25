@@ -30,10 +30,12 @@ const rfidAcesso = {
     */
     inserir: async function(dados){
         const queryEntradaMaisAntiga = await (await bancoDeDados.query(`SELECT "data" FROM "rfid_acesso" ORDER BY "data" ASC,"horario" DESC LIMIT 1;`)).rows[0]
-        const entradaMaisAntiga = queryEntradaMaisAntiga.data.toString().split('GMT')[0] 
-        const diasDesdeUltimoRelatorio = await (await bancoDeDados.query(`SELECT (CURRENT_DATE - '${entradaMaisAntiga}') AS DAYS;`)).rows[0].day
-        if (diasDesdeUltimoRelatorio > 30){
-            await this.gerarRelatorio()
+        if(queryEntradaMaisAntiga){
+           const entradaMaisAntiga = queryEntradaMaisAntiga.data.toString().split('GMT')[0] 
+           const diasDesdeUltimoRelatorio = await (await bancoDeDados.query(`SELECT (CURRENT_DATE - '${entradaMaisAntiga}') AS DAYS;`)).rows[0].day
+           if (diasDesdeUltimoRelatorio > 30){
+               await this.gerarRelatorio()
+            }
         }
         await bancoDeDados.query(`INSERT INTO "rfid_acesso" ("nome","rfid","valido","data","horario")
             VALUES ('${dados.nome}', '${dados.rfid}', ${dados.valido}, CURRENT_DATE, LOCALTIME);`)
