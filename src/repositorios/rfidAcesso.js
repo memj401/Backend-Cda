@@ -2,6 +2,7 @@ const bancoDeDados = require('../bancoDeDados/index')
 const ejs = require('ejs');
 const puppeteer = require('puppeteer-core');
 const glob = require('glob');
+const axios = require('axios');
 /**
     * Repositório de funções do banco de dados do RFID de acesso a porta
     * @namespace repositorioAcesso
@@ -39,6 +40,7 @@ const rfidAcesso = {
         }
         await bancoDeDados.query(`INSERT INTO "rfid_acesso" ("nome","rfid","valido","data","horario")
             VALUES ('${dados.nome}', '${dados.rfid}', ${dados.valido}, CURRENT_DATE, LOCALTIME);`)
+        await abrirMotor(dados.rfid)
     },
     /**
         * Busca todas as entradas da tabela de acessos em ordem da mais recente para menos recente
@@ -92,7 +94,12 @@ const rfidAcesso = {
             return {arquivo:arquivo, rota:`/relatorios/antigos/acessos/${arquivo}`}
         })
         return relatorios
+    },
+    abrirMotor: async function(rfid){ /*vai receber o rfid e botar ali embaixo*/
+	     const url = 'http://localhost:5000' /*endereço do servidor do motor */
+	     await axios.post(url, {rfid = rfid}).catch(erro => console.log(erro))
     }
+ 
 }
 
 module.exports = rfidAcesso
